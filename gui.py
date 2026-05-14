@@ -87,7 +87,7 @@ class GUI:
 
 
     def updateCurrentCoordinate(self, point: Point):
-        self.coordinatesLabel["text"] = "({0}, {1})".format(point.x, point.y)
+        self.coordinatesLabel["text"] = f"({point.x}, {point.y})"
 
 
     def updateBotStatus(self, is_running: bool):
