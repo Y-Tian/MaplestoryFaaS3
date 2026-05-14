@@ -86,20 +86,28 @@ class GUI:
         self.playerCoordinatesLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=85)
 
         tk.Label(
-            self.root, text="Rune:", fg="#000000", font=("arial", 9, "normal")
+            self.root, text="Start:", fg="#000000", font=("arial", 9, "normal")
         ).grid(row=0, column=1, sticky="NW", padx=25, pady=110)
+        self.startCoordinatesLabel = tk.Label(
+            self.root, text="(null,null)", fg="#123fff", font=("arial", 9, "normal")
+        )
+        self.startCoordinatesLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=110)
+
+        tk.Label(
+            self.root, text="Rune:", fg="#000000", font=("arial", 9, "normal")
+        ).grid(row=0, column=1, sticky="NW", padx=25, pady=135)
         self.runeCoordinatesLabel = tk.Label(
             self.root, text="(null,null)", fg="#123fff", font=("arial", 9, "normal")
         )
-        self.runeCoordinatesLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=110)
+        self.runeCoordinatesLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=135)
 
         tk.Label(
             self.root, text="Time:", fg="#000000", font=("arial", 9, "normal")
-        ).grid(row=0, column=1, sticky="NW", padx=25, pady=135)
+        ).grid(row=0, column=1, sticky="NW", padx=25, pady=160)
         self.elapsedRuntimeLabel = tk.Label(
             self.root, text="00:00:00", fg="#123fff", font=("arial", 9, "normal")
         )
-        self.elapsedRuntimeLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=135)
+        self.elapsedRuntimeLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=160)
 
         # Start Section
         self.loadFileButton = tk.Button(
@@ -145,6 +153,9 @@ class GUI:
     def updatePlayerCurrentCoordinates(self, point: Point):
         self.playerCoordinatesLabel["text"] = f"({point.x}, {point.y})"
 
+    def updateStartCurrentCoordinates(self, point: Point):
+        self.startCoordinatesLabel["text"] = f"({point.x}, {point.y})"
+
     def updateRuneCurrentCoordinates(self, point: Point | None):
         if point:
             self.runeCoordinatesLabel["text"] = f"({point.x}, {point.y})"
@@ -153,6 +164,7 @@ class GUI:
 
     def refresh_live_info(self):
         self.updatePlayerCurrentCoordinates(self.player.get_coordinates())
+        self.updateStartCurrentCoordinates(self.player.get_start_coordinates())
         self.updateRuneCurrentCoordinates(self.rune.get_coordinates())
         self.root.after(500, self.refresh_live_info)
 
