@@ -2,6 +2,7 @@ from typing import List
 
 from widgets.geometry import Point
 
+
 class Minimap:
     def __init__(self, grid: List[Point]) -> None:
         self.grid = grid

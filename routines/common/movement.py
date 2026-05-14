@@ -4,6 +4,7 @@ import widgets.serial_input as serial_input
 import time
 from config import JUMP_KEY, ROPE_LIFT_KEY
 
+
 def turn_left():
     serial_input.key_down("left")
     time.sleep(0.05)
@@ -19,10 +20,12 @@ def turn_right():
 
     time.sleep(0.5)
 
+
 def rope_lift():
     serial_input.press("h")
 
     time.sleep(3)
+
 
 def down_jump():
     serial_input.key_down("down")
@@ -33,6 +36,7 @@ def down_jump():
     serial_input.key_up("down")
 
     time.sleep(0.5)
+
 
 def get_walk_hold_time(distance) -> float:
     remaining_distance = abs(distance)
@@ -46,9 +50,11 @@ def get_walk_hold_time(distance) -> float:
         return 0.08
     return 0.05
 
+
 def hold_key(key, hold_time) -> None:
     hold_ms = max(int(hold_time * 1000), 20)
     serial_input.hold(key, hold_ms)
+
 
 def move_horizontal(direction_key: str, distance: int) -> None:
     if abs(distance) >= 30:
@@ -59,6 +65,7 @@ def move_horizontal(direction_key: str, distance: int) -> None:
 
     # Delay for movement momentum
     time.sleep(0.05)
+
 
 def move_vertical(direction_key: str) -> None:
     if direction_key == "up":
@@ -77,6 +84,7 @@ def move_vertical(direction_key: str) -> None:
         serial_input.key_up("down")
         # Delay for air time momentum
         time.sleep(1.1)
+
 
 def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> None:
     current_player_x = player.get_coordinates().x

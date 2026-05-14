@@ -2,6 +2,7 @@ from widgets.geometry import Point
 from PIL import Image
 from config import RUNE_ICON_MATCH_THRESHOLD
 
+
 class Rune:
     def __init__(self) -> None:
         self.coord = None

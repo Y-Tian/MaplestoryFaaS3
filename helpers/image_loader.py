@@ -3,6 +3,7 @@ import pyautogui
 from widgets.geometry import Point
 from typing import List
 
+
 def get_image_boundaries() -> List[Point]:
     boundaries: List[Point] = []
 
@@ -13,10 +14,10 @@ def get_image_boundaries() -> List[Point]:
 
             if len(boundaries) == 2:
                 return False
-            
+
         return True
 
-    with keyboard.Listener(on_press=on_press) as listener: # type: ignore
+    with keyboard.Listener(on_press=on_press) as listener:  # type: ignore
         listener.join()
 
     return boundaries

@@ -31,6 +31,7 @@ def fj_right():
 
     time.sleep(1)
 
+
 def set_erda_fountain():
     serial_input.key_down("down")
     time.sleep(0.05)
@@ -40,6 +41,7 @@ def set_erda_fountain():
     serial_input.key_up("down")
 
     time.sleep(0.5)
+
 
 def activate_loot_sequence():
     serial_input.key_down("end")

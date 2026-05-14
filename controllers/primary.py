@@ -6,6 +6,7 @@ from routines.common import rune
 
 log = init_logger(__name__)
 
+
 class PrimaryController:
     def __init__(self, player: Player, rune: Rune) -> None:
         self.player = player
@@ -30,7 +31,7 @@ class PrimaryController:
             if rune.detect_rune_present(self.rune):
                 log.info("Rune detected, solving...")
                 rune.solve(self.player, self.rune)
-                
+
             """
             Add routine phase 2 below
             """

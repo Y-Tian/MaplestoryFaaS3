@@ -13,13 +13,18 @@ from widgets.logger import init_logger
 
 log = init_logger(__name__)
 
+
 def detect_rune_present(rune: Rune) -> bool:
     return rune.get_coordinates() is not None
 
-def is_in_range(target_x: float, target_y: float, player_coords: Point, wanted_range: float) -> bool:
+
+def is_in_range(
+    target_x: float, target_y: float, player_coords: Point, wanted_range: float
+) -> bool:
     x_range = abs(target_x - player_coords.x)
     y_range = abs(target_y - player_coords.y)
     return x_range < wanted_range and y_range < wanted_range
+
 
 def get_rune_screenshot() -> Image.Image | None:
     active_window = win32gui.FindWindow(None, ACTIVE_WINDOW_NAME)
@@ -36,15 +41,18 @@ def get_rune_screenshot() -> Image.Image | None:
         rune_section_bottom_right_x = (window_width / 3) + top_left_x
         rune_section_bottom_right_y = (window_height / 4) + top_left_y
 
-        rune_screenshot = ImageGrab.grab(bbox=(
-            rune_section_top_left_x,
-            rune_section_top_left_y,
-            rune_section_bottom_right_x,
-            rune_section_bottom_right_y
-        ))
+        rune_screenshot = ImageGrab.grab(
+            bbox=(
+                rune_section_top_left_x,
+                rune_section_top_left_y,
+                rune_section_bottom_right_x,
+                rune_section_bottom_right_y,
+            )
+        )
         return rune_screenshot
-    
+
     return None
+
 
 def get_rune_arrow_direction(screenshot: Image.Image, x: int, y: int) -> str | None:
     max_x, max_y = screenshot.size
@@ -69,8 +77,10 @@ def get_rune_arrow_direction(screenshot: Image.Image, x: int, y: int) -> str | N
                 return "down"
     return None
 
+
 def get_arrow_sequence_key(arrows_key: tuple) -> int:
     return arrows_key[1]
+
 
 def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
     width, height = screenshot.size
@@ -82,7 +92,11 @@ def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
             rgb_pixel = screenshot.getpixel((x, y))
 
             # grabs the green pixels from the rune arrows
-            if 235 <= rgb_pixel[1] <= 255 and 0 < rgb_pixel[0] < 50 and rgb_pixel[2] < 200:
+            if (
+                235 <= rgb_pixel[1] <= 255
+                and 0 < rgb_pixel[0] < 50
+                and rgb_pixel[2] < 200
+            ):
                 for arrow in arrow_sequence:
                     if abs(arrow[1] - x) <= 25:
                         to_add = False
@@ -92,6 +106,7 @@ def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
                         arrow_sequence.append((direction, x))
 
     return sorted(arrow_sequence, key=get_arrow_sequence_key)
+
 
 def solve(player: Player, rune: Rune):
     rune_coords = rune.get_coordinates()
@@ -121,8 +136,10 @@ def solve(player: Player, rune: Rune):
                 time.sleep(random.uniform(0.12, 0.22))
                 serial_input.press(arrow_key[0])
         else:
-            log.error(f"Expected 4 arrows for rune puzzle, but found {len(arrow_key_sequence)}. Sequence: {arrow_key_sequence}")
-                
+            log.error(
+                f"Expected 4 arrows for rune puzzle, but found {len(arrow_key_sequence)}. Sequence: {arrow_key_sequence}"
+            )
+
     # Reset the rune after the attempt (assume it succeeded)
     rune.set_coordinates(None)
     # Reset the player position after the attempt

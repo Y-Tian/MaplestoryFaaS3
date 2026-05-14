@@ -7,7 +7,7 @@ from config import (
     DEFAULT_PORT,
     PAUSE,
     OPEN_DELAY_SECONDS,
-    HANDSHAKE_TIMEOUT_SECONDS
+    HANDSHAKE_TIMEOUT_SECONDS,
 )
 
 _bridge = None

@@ -2,6 +2,7 @@ from widgets.geometry import Point
 from PIL import Image
 from config import PLAYER_ICON_MATCH_THRESHOLD
 
+
 class Player:
     def __init__(self) -> None:
         self.coord = Point()
@@ -16,7 +17,7 @@ class Player:
 
     def get_coordinates(self) -> Point:
         return self.coord
-    
+
     def set_start_coordinates(self, point: Point) -> None:
         self.start_coord = point
 
