@@ -4,15 +4,17 @@ from widgets.logger import init_logger
 from widgets.player import Player
 from helpers.screenshot import get_screenshot
 from helpers.image_compare import find_coordinates_by_template
+from widgets.rune import Rune
 
 log = init_logger(__name__)
 
 class GameMonitor:
-    def __init__(self, minimap: Minimap, player: Player):
+    def __init__(self, minimap: Minimap, player: Player, rune: Rune):
         self.minimap = minimap
         self.minimap_image = None
         self.player = player
-
+        self.rune = rune
+    
     def set_minimap_image(self) -> None:
         self.minimap_image = get_screenshot(self.minimap)
 
@@ -24,6 +26,14 @@ class GameMonitor:
         if player_coord:
             self.player.set_coordinates(player_coord)
 
+    def update_rune_coordinates(self):
+        if self.rune.icon is None or self.minimap_image is None:
+            return
+
+        rune_coord = find_coordinates_by_template(self.minimap_image, self.rune.icon, self.rune.icon_match_threshold)
+        # Could be None already if not found, so no-op
+        self.rune.set_coordinates(rune_coord)
+
     def run(self, stop_event: threading.Event):
         log.info("Thread started")
         while not stop_event.is_set():
@@ -31,6 +41,7 @@ class GameMonitor:
             if grid:
                 self.set_minimap_image()
                 self.update_player_coordinates()
+                self.update_rune_coordinates()
 
             # Yield CPU and check stop status regularly.
             stop_event.wait(0.1)
