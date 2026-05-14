@@ -37,11 +37,11 @@ def get_rune_screenshot() -> Image.Image | None:
         window_height = bottom_right_y - top_left_y
         window_width = bottom_right_x - top_left_x
 
-        # Split window into thirds and use the middle third
-        rune_section_top_left_x = (window_width / 3) + top_left_x
-        rune_section_top_left_y = (window_height / 4) + top_left_y
-        rune_section_bottom_right_x = (window_width / 3) + top_left_x
-        rune_section_bottom_right_y = (window_height / 4) + top_left_y
+        # Capture the center third (x-axis) and middle half (y-axis) of the game window
+        rune_section_top_left_x = top_left_x + (window_width / 3)
+        rune_section_top_left_y = top_left_y + (window_height / 4)
+        rune_section_bottom_right_x = rune_section_top_left_x + (window_width/ 3)
+        rune_section_bottom_right_y = rune_section_top_left_y + (window_height / 4)
 
         rune_screenshot = ImageGrab.grab(
             bbox=(

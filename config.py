@@ -4,7 +4,7 @@ ACTIVE_WINDOW_NAME = "MapleStory"
 
 # Image recognition settings
 PLAYER_ICON_MATCH_THRESHOLD = 0.30
-RUNE_ICON_MATCH_THRESHOLD = 0.22
+RUNE_ICON_MATCH_THRESHOLD = 0.25
 RANDOM_ICON_MATCH_THRESHOLD = 0.22
 
 # Serial communication settings
