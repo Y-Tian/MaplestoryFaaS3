@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from widgets.geometry import Point
 
 class GUI:
     def __init__(self, title: str, geometry: str="400x400"):
@@ -21,7 +21,6 @@ class GUI:
         initFrame.grid(row=0, column=0, sticky="W", padx=15, pady=15)
         liveFrame.grid(row=0, column=1, sticky="E", padx=15, pady=15)
 
-        # Init Frame
         tk.Label(
             self.root, text="Initialize Settings", fg="#000000", font=("arial", 9, "bold")
         ).grid(row=0, column=0, sticky="N", pady=20)
@@ -40,7 +39,6 @@ class GUI:
         self.miniMapLabel = tk.Label(self.root, text="Waiting", fg="#f0ae13", font=("arial", 9, "normal"))
         self.miniMapLabel.grid(row=0, column=0, sticky="NE", padx=35, pady=85)
 
-        # Live Frame
         tk.Label(self.root, text="Live Info", fg="#000000", font=("arial", 9, "bold")).grid(
             row=0, column=1, sticky="N", pady=20
         )
@@ -88,7 +86,7 @@ class GUI:
             self.miniMapLabel["fg"] = "#0aad20"
 
 
-    def updateCurrentCoordinate(self, point):
+    def updateCurrentCoordinate(self, point: Point):
         self.coordinatesLabel["text"] = "({0}, {1})".format(point.x, point.y)
 
 
