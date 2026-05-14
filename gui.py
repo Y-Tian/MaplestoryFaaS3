@@ -1,8 +1,12 @@
 import tkinter as tk
 from widgets.geometry import Point
+from widgets.minimap import Minimap
+from helpers.image_loader import get_image_boundaries
 
 class GUI:
-    def __init__(self, title: str, geometry: str="400x400"):
+    def __init__(self, title: str, minimap: Minimap, geometry: str="400x400"):
+        self.minimap = minimap
+
         self.root = tk.Tk()
 
         # This is the section of code which define the main window
@@ -29,7 +33,7 @@ class GUI:
             text="Load Data",
             bg="#F0FFFF",
             font=("arial", 9, "normal"),
-            # command=handler.initButtonClick,
+            command=self.initialize_settings,
         ).grid(row=0, column=0, sticky="S", pady=40)
 
 
@@ -77,7 +81,7 @@ class GUI:
         )
         self.botStatusLabel.grid(row=5, column=0, sticky="SW", padx=55)
 
-    def updateMiniMapLabel(self, error: str = ""):
+    def updateMinimapLabel(self, error: str = ""):
         if error is not None:
             self.miniMapLabel["text"] = error
             self.miniMapLabel["fg"] = "#c70c0c"
@@ -85,10 +89,8 @@ class GUI:
             self.miniMapLabel["text"] = "Done"
             self.miniMapLabel["fg"] = "#0aad20"
 
-
     def updateCurrentCoordinate(self, point: Point):
         self.coordinatesLabel["text"] = f"({point.x}, {point.y})"
-
 
     def updateBotStatus(self, is_running: bool):
         if is_running:
@@ -99,3 +101,7 @@ class GUI:
             self.botStatusLabel["text"] = "Offline"
             self.botStatusLabel["fg"] = "#ff0000"
             self.startButton["text"] = "Start Engine"
+
+    def initialize_settings(self):
+        minimap_boundaries = get_image_boundaries()
+        self.minimap.set_grid(minimap_boundaries)
