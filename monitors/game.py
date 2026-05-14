@@ -28,11 +28,19 @@ class GameMonitor:
 
     def update_rune_coordinates(self):
         if self.rune.icon is None or self.minimap_image is None:
+            self.rune.set_coordinates(None)
             return
 
         rune_coord = find_coordinates_by_template(self.minimap_image, self.rune.icon, self.rune.icon_match_threshold)
-        # Could be None already if not found, so no-op
-        self.rune.set_coordinates(rune_coord)
+        if rune_coord:
+            if rune_coord.x < 0 or rune_coord.y < 0 or rune_coord.x > self.minimap.get_grid()[1].x or rune_coord.y > self.minimap.get_grid()[1].y:
+                log.error(f"Found rune coordinates {rune_coord} are out of bounds, ignoring.")
+                self.rune.set_coordinates(None)
+                return
+
+            self.rune.set_coordinates(rune_coord)
+        else:
+            self.rune.set_coordinates(None)
 
     def run(self, stop_event: threading.Event):
         log.info("Thread started")
