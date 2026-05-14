@@ -1,6 +1,7 @@
 import routines.bowmaster.skills as skills
 import routines.common.skills as common_skills
 import routines.common.movement as movement
+from widgets.anchor import Anchor
 from widgets.geometry import Point
 from widgets.player import Player
 import time
@@ -12,11 +13,11 @@ import routines.common.pet as pet
 log = init_logger(__name__)
 
 class Rotation:
-    def __init__(self, player: Player) -> None:
+    def __init__(self, player: Player, anchor: Anchor) -> None:
         self.player = player
+        self.anchor = anchor
         self.loot_timer = 0
         self.summon_timer = 0
-        self.hurricane_anchor = Point()
 
     def setup(self):
         # Delay for the user to switch to the game window after clicking "Setup Routine"
@@ -31,7 +32,7 @@ class Rotation:
         skills.swift_surge()
         skills.swift_surge()
         skills.swift_surge()
-        self.hurricane_anchor = self.player.get_coordinates()
+        self.anchor.set_coordinates(self.player.get_coordinates())
         skills.use_blink_shot_portal()
         log.info("Routine setup complete")
 
@@ -58,7 +59,7 @@ class Rotation:
         skills.swift_surge()
 
     def do_mobbing(self):
-        go_to(self.player, self.hurricane_anchor, 1)
+        go_to(self.player, self.anchor.get_coordinates(), 1)
         skills.jumping_hurricane_left_right(time.time() + 45)
 
     def mobbing_cycle(self):

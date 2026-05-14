@@ -8,6 +8,7 @@ from typing import Dict, Any
 from config import GUI_NAME
 from widgets.player import Player
 from widgets.rune import Rune
+from widgets.anchor import Anchor
 
 log = init_logger(__name__)
 
@@ -15,9 +16,10 @@ if __name__ == "__main__":
     minimap = Minimap([])
     player = Player()
     rune = Rune()
+    anchor = Anchor()
 
     game_monitor = GameMonitor(minimap, player, rune)
-    primary_controller = PrimaryController(player, rune)
+    primary_controller = PrimaryController(player, rune, anchor)
     monitor_state: Dict[str, Any] = {"thread": None, "stop_event": threading.Event()}
     controller_state: Dict[str, Any] = {"thread": None, "stop_event": threading.Event()}
 

@@ -3,19 +3,21 @@ from widgets.logger import init_logger
 from widgets.player import Player
 from widgets.rune import Rune
 from routines.common import rune
+from widgets.anchor import Anchor
 from routines.bowmaster.hidden_illyard_field import Rotation
 
 log = init_logger(__name__)
 
 
 class PrimaryController:
-    def __init__(self, player: Player, rune: Rune) -> None:
+    def __init__(self, player: Player, rune: Rune, anchor: Anchor) -> None:
         self.player = player
         self.rune = rune
+        self.anchor = anchor
 
     def run(self, stop_event: threading.Event):
         log.info("Thread started")
-        routine = Rotation(self.player)
+        routine = Rotation(self.player, self.anchor)
         while not stop_event.is_set():
             # Invoke a known set of routines in sequence
             if rune.detect_rune_present(self.rune):
