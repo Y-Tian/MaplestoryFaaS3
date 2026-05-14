@@ -18,33 +18,61 @@ if __name__ == "__main__":
 
     game_monitor = GameMonitor(minimap, player, rune)
     primary_controller = PrimaryController(player, rune)
-    engine_state: Dict[str, Any] = {"thread": None}
-    stop_event = threading.Event()
+    monitor_state: Dict[str, Any] = {"thread": None, "stop_event": threading.Event()}
+    controller_state: Dict[str, Any] = {"thread": None, "stop_event": threading.Event()}
 
-    def start_engine():
-        log.info("Started")
-        stop_event.clear()
+    def start_monitor():
+        monitor_thread = monitor_state["thread"]
+        if monitor_thread and monitor_thread.is_alive():
+            log.info("Game monitor already running")
+            return
+
+        log.info("Starting game monitor")
+        monitor_state["stop_event"].clear()
         game_monitor_thread = threading.Thread(
             target=game_monitor.run,
-            args=(stop_event,),
+            args=(monitor_state["stop_event"],),
             daemon=True,
         )
-        engine_state["thread"] = game_monitor_thread
+        monitor_state["thread"] = game_monitor_thread
         game_monitor_thread.start()
 
+    def stop_monitor():
+        log.info("Game monitor stop requested")
+        monitor_state["stop_event"].set()
+
+    def start_controller():
+        controller_thread = controller_state["thread"]
+        if controller_thread and controller_thread.is_alive():
+            log.info("Primary controller already running")
+            return
+
+        log.info("Starting primary controller")
+        controller_state["stop_event"].clear()
         primary_controller_thread = threading.Thread(
             target=primary_controller.run,
-            args=(stop_event,),
+            args=(controller_state["stop_event"],),
             daemon=True,
         )
+        controller_state["thread"] = primary_controller_thread
         primary_controller_thread.start()
 
-    def stop_engine():
-        log.info("Stop requested")
-        stop_event.set()
+    def stop_controller():
+        log.info("Primary controller stop requested")
+        controller_state["stop_event"].set()
 
-    gui = GUI(GUI_NAME, minimap, player, rune, start_engine, stop_engine)
+    gui = GUI(
+        GUI_NAME,
+        minimap,
+        player,
+        rune,
+        start_controller,
+        stop_controller,
+        start_monitor,
+        stop_monitor,
+    )
     try:
         gui.root.mainloop()
     finally:
-        stop_engine()
+        stop_controller()
+        stop_monitor()

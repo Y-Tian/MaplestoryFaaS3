@@ -17,16 +17,21 @@ class GUI:
         minimap: Minimap,
         player: Player,
         rune: Rune,
-        start_engine: Callable[[], None],
-        stop_engine: Callable[[], None],
-        geometry: str = "400x550",
+        start_controller: Callable[[], None],
+        stop_controller: Callable[[], None],
+        start_monitor: Callable[[], None],
+        stop_monitor: Callable[[], None],
+        geometry: str = "400x650",
     ):
         self.minimap = minimap
         self.player = player
         self.rune = rune
-        self._start_engine = start_engine
-        self._stop_engine = stop_engine
-        self._engine_running = False
+        self._start_controller = start_controller
+        self._stop_controller = stop_controller
+        self._start_monitor = start_monitor
+        self._stop_monitor = stop_monitor
+        self._controller_running = False
+        self._monitor_running = False
         self._loaded_routine_module: str | None = None
 
         self.root = tk.Tk()
@@ -119,6 +124,15 @@ class GUI:
         )
         self.loadFileButton.grid(row=2, columnspan=2, sticky="S", pady=5)
 
+        self.startMonitorButton = tk.Button(
+            self.root,
+            text="Start Monitor",
+            bg="#F0FFFF",
+            font=("arial", 12, "normal"),
+            command=self.toggle_monitor,
+        )
+        self.startMonitorButton.grid(row=3, columnspan=2, sticky="S", pady=7)
+
         self.setupButton = tk.Button(
             self.root,
             text="Setup Routine",
@@ -126,24 +140,24 @@ class GUI:
             font=("arial", 12, "normal"),
             command=self.run_loaded_routine_setup,
         )
-        self.setupButton.grid(row=3, columnspan=2, sticky="S", pady=7)
+        self.setupButton.grid(row=4, columnspan=2, sticky="S", pady=7)
 
-        self.startButton = tk.Button(
+        self.startControllerButton = tk.Button(
             self.root,
-            text="Start Routine",
+            text="Start Controller",
             bg="#F0FFFF",
             font=("arial", 12, "normal"),
-            command=self.toggle_engine,
+            command=self.toggle_controller,
         )
-        self.startButton.grid(row=4, columnspan=2, sticky="S", pady=10)
+        self.startControllerButton.grid(row=5, columnspan=2, sticky="S", pady=10)
 
         tk.Label(
             self.root, text="Status:", fg="#000000", font=("arial", 10, "normal")
-        ).grid(row=5, column=0, sticky="SW", padx=10)
+        ).grid(row=6, column=0, sticky="SW", padx=10)
         self.botStatusLabel = tk.Label(
             self.root, text="Offline", fg="#FF0000", font=("arial", 10, "normal")
         )
-        self.botStatusLabel.grid(row=5, column=0, sticky="SW", padx=55)
+        self.botStatusLabel.grid(row=6, column=0, sticky="SW", padx=55)
         self.root.after(500, self.refresh_live_info)
 
     def updateMinimapLabel(self):
@@ -169,27 +183,37 @@ class GUI:
         self.root.after(500, self.refresh_live_info)
 
     def updateBotStatus(self, is_running: bool):
-        self._engine_running = is_running
+        self._controller_running = is_running
         if is_running:
             self.botStatusLabel["text"] = "Online"
             self.botStatusLabel["fg"] = "#0aad20"
-            self.startButton["text"] = "Stop Engine"
+            self.startControllerButton["text"] = "Stop Controller"
         else:
             self.botStatusLabel["text"] = "Offline"
             self.botStatusLabel["fg"] = "#ff0000"
-            self.startButton["text"] = "Start Engine"
+            self.startControllerButton["text"] = "Start Controller"
 
-    def toggle_engine(self):
+    def toggle_controller(self):
         if not self._loaded_routine_module:
             messagebox.showerror("No routine loaded", "Load a routine file first.")
             return
 
-        if self._engine_running:
-            self._stop_engine()
+        if self._controller_running:
+            self._stop_controller()
             self.updateBotStatus(False)
         else:
-            self._start_engine()
+            self._start_controller()
             self.updateBotStatus(True)
+
+    def toggle_monitor(self):
+        if self._monitor_running:
+            self._stop_monitor()
+            self._monitor_running = False
+            self.startMonitorButton["text"] = "Start Monitor"
+        else:
+            self._start_monitor()
+            self._monitor_running = True
+            self.startMonitorButton["text"] = "Stop Monitor"
 
     def initialize_settings(self):
         minimap_boundaries = get_image_boundaries()
