@@ -1,6 +1,7 @@
 from gui import GUI
 from widgets.minimap import Minimap
 from monitors.game import GameMonitor
+from controllers.primary import PrimaryController
 import threading
 from widgets.logger import init_logger
 from typing import Dict, Any
@@ -16,6 +17,7 @@ if __name__ == "__main__":
     rune = Rune()
 
     game_monitor = GameMonitor(minimap, player, rune)
+    primary_controller = PrimaryController(player, rune)
     engine_state: Dict[str, Any] = {"thread": None}
     stop_event = threading.Event()
 
