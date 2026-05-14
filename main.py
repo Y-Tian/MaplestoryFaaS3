@@ -68,6 +68,7 @@ if __name__ == "__main__":
         minimap,
         player,
         rune,
+        anchor,
         start_controller,
         stop_controller,
         start_monitor,

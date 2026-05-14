@@ -8,6 +8,7 @@ from widgets.minimap import Minimap
 from helpers.image_loader import get_image_boundaries
 from widgets.player import Player
 from widgets.rune import Rune
+from widgets.anchor import Anchor
 
 
 class GUI:
@@ -17,6 +18,7 @@ class GUI:
         minimap: Minimap,
         player: Player,
         rune: Rune,
+        anchor: Anchor,
         start_controller: Callable[[], None],
         stop_controller: Callable[[], None],
         start_monitor: Callable[[], None],
@@ -26,6 +28,7 @@ class GUI:
         self.minimap = minimap
         self.player = player
         self.rune = rune
+        self.anchor = anchor
         self._start_controller = start_controller
         self._stop_controller = stop_controller
         self._start_monitor = start_monitor
@@ -253,7 +256,7 @@ class GUI:
             return
 
         try:
-            rotation = rotation_cls(self.player)
+            rotation = rotation_cls(self.player, self.anchor)
             setup_fn = getattr(rotation, "setup", None)
             if not callable(setup_fn):
                 raise AttributeError("Rotation.setup is missing or not callable.")
