@@ -4,6 +4,36 @@ import widgets.serial_input as serial_input
 import time
 from config import JUMP_KEY, ROPE_LIFT_KEY
 
+def turn_left():
+    serial_input.key_down("left")
+    time.sleep(0.05)
+    serial_input.key_up("left")
+
+    time.sleep(0.5)
+
+
+def turn_right():
+    serial_input.key_down("right")
+    time.sleep(0.05)
+    serial_input.key_up("right")
+
+    time.sleep(0.5)
+
+def rope_lift():
+    serial_input.press("h")
+
+    time.sleep(3)
+
+def down_jump():
+    serial_input.key_down("down")
+    time.sleep(0.05)
+    serial_input.key_down("v")
+    time.sleep(0.05)
+    serial_input.key_up("v")
+    serial_input.key_up("down")
+
+    time.sleep(0.5)
+
 def get_walk_hold_time(distance) -> float:
     remaining_distance = abs(distance)
 
