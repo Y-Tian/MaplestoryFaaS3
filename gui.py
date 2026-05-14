@@ -1,5 +1,8 @@
 import tkinter as tk
+from tkinter import filedialog, messagebox
 from typing import Callable
+from pathlib import Path
+import importlib
 from widgets.geometry import Point
 from widgets.minimap import Minimap
 from helpers.image_loader import get_image_boundaries
@@ -16,7 +19,7 @@ class GUI:
         rune: Rune,
         start_engine: Callable[[], None],
         stop_engine: Callable[[], None],
-        geometry: str = "400x400",
+        geometry: str = "400x550",
     ):
         self.minimap = minimap
         self.player = player
@@ -24,6 +27,7 @@ class GUI:
         self._start_engine = start_engine
         self._stop_engine = stop_engine
         self._engine_running = False
+        self._loaded_routine_module: str | None = None
 
         self.root = tk.Tk()
 
@@ -98,9 +102,27 @@ class GUI:
         self.elapsedRuntimeLabel.grid(row=0, column=1, sticky="NE", padx=35, pady=135)
 
         # Start Section
+        self.loadFileButton = tk.Button(
+            self.root,
+            text="Load Routine File",
+            bg="#F0FFFF",
+            font=("arial", 12, "normal"),
+            command=self.select_routine_file,
+        )
+        self.loadFileButton.grid(row=2, columnspan=2, sticky="S", pady=5)
+
+        self.setupButton = tk.Button(
+            self.root,
+            text="Setup Routine",
+            bg="#F0FFFF",
+            font=("arial", 12, "normal"),
+            command=self.run_loaded_routine_setup,
+        )
+        self.setupButton.grid(row=3, columnspan=2, sticky="S", pady=7)
+
         self.startButton = tk.Button(
             self.root,
-            text="Start Engine",
+            text="Start Routine",
             bg="#F0FFFF",
             font=("arial", 12, "normal"),
             command=self.toggle_engine,
@@ -146,6 +168,10 @@ class GUI:
             self.startButton["text"] = "Start Engine"
 
     def toggle_engine(self):
+        if not self._loaded_routine_module:
+            messagebox.showerror("No routine loaded", "Load a routine file first.")
+            return
+
         if self._engine_running:
             self._stop_engine()
             self.updateBotStatus(False)
@@ -157,3 +183,44 @@ class GUI:
         minimap_boundaries = get_image_boundaries()
         self.minimap.set_grid(minimap_boundaries)
         self.updateMinimapLabel()
+
+    def select_routine_file(self):
+        routines_dir = Path(__file__).resolve().parent / "routines"
+        selected_file = filedialog.askopenfilename(
+            title="Select routine",
+            initialdir=str(routines_dir),
+            filetypes=[("Python files", "*.py")],
+        )
+        if not selected_file:
+            return
+
+        selected_path = Path(selected_file).resolve()
+        relative_path = selected_path.relative_to(routines_dir)
+
+        module_path = ".".join(("routines",) + relative_path.with_suffix("").parts)
+        self._loaded_routine_module = module_path
+        messagebox.showinfo("Routine loaded", f"Loaded: {module_path}")
+
+    def run_loaded_routine_setup(self):
+        if not self._loaded_routine_module:
+            messagebox.showerror("No routine loaded", "Load a routine file first.")
+            return
+        self.setup_routine(self._loaded_routine_module)
+
+    def setup_routine(self, module_path: str):
+        module = importlib.import_module(module_path)
+        module = importlib.reload(module)
+
+        rotation_cls = getattr(module, "Rotation", None)
+        if rotation_cls is None:
+            messagebox.showerror("Invalid routine", f"{module_path} has no Rotation class.")
+            return
+
+        try:
+            rotation = rotation_cls(self.player)
+            setup_fn = getattr(rotation, "setup", None)
+            if not callable(setup_fn):
+                raise AttributeError("Rotation.setup is missing or not callable.")
+            setup_fn()
+        except Exception as exc:
+            messagebox.showerror("Setup failed", f"Failed while running setup():\n{exc}")
