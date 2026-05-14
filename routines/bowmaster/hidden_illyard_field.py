@@ -6,6 +6,8 @@ from widgets.player import Player
 import time
 from widgets.logger import init_logger
 from routines.common.movement import go_to
+import routines.common.buff as buff
+import routines.common.pet as pet
 
 log = init_logger(__name__)
 
@@ -65,6 +67,9 @@ class Rotation:
             self.do_mobbing()
 
     def loot_cycle(self):
+        buff.activate_sequence()
+        pet.feed()
+
         skills.use_blink_shot_portal()
         go_to(self.player, self.player.get_start_coordinates(), 1)
         skills.set_blink_shot_portal()

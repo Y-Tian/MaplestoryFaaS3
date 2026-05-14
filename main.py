@@ -32,6 +32,13 @@ if __name__ == "__main__":
         engine_state["thread"] = game_monitor_thread
         game_monitor_thread.start()
 
+        primary_controller_thread = threading.Thread(
+            target=primary_controller.run,
+            args=(stop_event,),
+            daemon=True,
+        )
+        primary_controller_thread.start()
+
     def stop_engine():
         log.info("Stop requested")
         stop_event.set()

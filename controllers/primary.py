@@ -3,6 +3,7 @@ from widgets.logger import init_logger
 from widgets.player import Player
 from widgets.rune import Rune
 from routines.common import rune
+from routines.bowmaster.hidden_illyard_field import Rotation
 
 log = init_logger(__name__)
 
@@ -14,6 +15,7 @@ class PrimaryController:
 
     def run(self, stop_event: threading.Event):
         log.info("Thread started")
+        routine = Rotation(self.player)
         while not stop_event.is_set():
             # Invoke a known set of routines in sequence
             if rune.detect_rune_present(self.rune):
@@ -23,6 +25,8 @@ class PrimaryController:
             """
             Add routine phase 1 below
             """
+
+            routine.mobbing_cycle()
 
             """
             Add routine phase 1 above
@@ -35,6 +39,8 @@ class PrimaryController:
             """
             Add routine phase 2 below
             """
+
+            routine.loot_cycle()
 
             """
             Add routine phase 2 above
