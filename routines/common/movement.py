@@ -99,7 +99,7 @@ def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> No
     delta_y = target_point.y - current_player_y
     # Add some wiggle room for vertical movement
     while abs(delta_y) > (buffer_distance + 5):
-        direction = "up" if delta_y > 0 else "down"
+        direction = "down" if delta_y > 0 else "up"
         move_vertical(direction)
         current_player_y = player.get_coordinates().y
         delta_y = target_point.y - current_player_y
