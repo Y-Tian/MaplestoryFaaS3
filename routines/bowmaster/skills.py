@@ -2,7 +2,7 @@ import widgets.serial_input as serial_input
 import time
 
 
-def swift_surge():
+def swift_surge() -> None:
     serial_input.key_down("j")
     time.sleep(0.05)
     serial_input.key_up("j")
@@ -10,7 +10,7 @@ def swift_surge():
     time.sleep(0.6)
 
 
-def swift_surge_left():
+def swift_surge_left() -> None:
     serial_input.key_down("left")
     serial_input.press("j")
     time.sleep(0.1)
@@ -19,7 +19,7 @@ def swift_surge_left():
     time.sleep(1)
 
 
-def swift_surge_right():
+def swift_surge_right() -> None:
     serial_input.key_down("right")
     serial_input.press("j")
     time.sleep(0.1)
@@ -28,19 +28,19 @@ def swift_surge_right():
     time.sleep(1)
 
 
-def arrow_stream():
+def arrow_stream() -> None:
     serial_input.press("c")
 
     time.sleep(0.5)
 
 
-def gritty_gust():
+def gritty_gust() -> None:
     serial_input.key_down("r")
 
     time.sleep(0.5)
 
 
-def use_blink_shot_portal():
+def use_blink_shot_portal() -> None:
     serial_input.key_down("d")
     time.sleep(0.07)
     serial_input.key_up("d")
@@ -48,7 +48,7 @@ def use_blink_shot_portal():
     time.sleep(0.5)
 
 
-def set_blink_shot_portal():
+def set_blink_shot_portal() -> None:
     serial_input.key_down("d")
     time.sleep(0.07)
     serial_input.key_up("d")
@@ -56,7 +56,7 @@ def set_blink_shot_portal():
     time.sleep(0.5)
 
 
-def refresh_blink_shot_portal():
+def refresh_blink_shot_portal() -> None:
     serial_input.key_down("down")
     time.sleep(0.07)
     serial_input.key_down("d")
@@ -66,7 +66,7 @@ def refresh_blink_shot_portal():
     time.sleep(0.5)
 
 
-def jumping_hurricane_left_right(duration):
+def jumping_hurricane_left_right(duration: float) -> None:
     serial_input.key_down("x")
 
     while time.time() < duration:
@@ -89,7 +89,7 @@ def jumping_hurricane_left_right(duration):
     time.sleep(0.5)
 
 
-def set_arrow_blaster():
+def set_arrow_blaster() -> None:
     serial_input.key_down("u")
     time.sleep(0.05)
     serial_input.press("y")
@@ -100,7 +100,7 @@ def set_arrow_blaster():
     time.sleep(0.5)
 
 
-def fj_left_atk():
+def fj_left_atk() -> None:
     serial_input.key_down("left")
     serial_input.key_down("v")
     time.sleep(0.02)
@@ -118,7 +118,7 @@ def fj_left_atk():
     time.sleep(1)
 
 
-def fj_right_atk():
+def fj_right_atk() -> None:
     serial_input.key_down("right")
     serial_input.key_down("v")
     time.sleep(0.02)
@@ -136,7 +136,7 @@ def fj_right_atk():
     time.sleep(1)
 
 
-def jump_covering_fire():
+def jump_covering_fire() -> None:
     serial_input.key_down("v")
     time.sleep(0.07)
     serial_input.key_down("space")
@@ -147,7 +147,7 @@ def jump_covering_fire():
     time.sleep(0.5)
 
 
-def covering_fire():
+def covering_fire() -> None:
     serial_input.key_down("space")
     time.sleep(0.05)
     serial_input.key_up("space")

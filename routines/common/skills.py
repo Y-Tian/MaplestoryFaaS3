@@ -2,7 +2,7 @@ import widgets.serial_input as serial_input
 import time
 
 
-def flash_jump_left():
+def flash_jump_left() -> None:
     serial_input.key_down("left")
     serial_input.key_down("v")
     time.sleep(0.05)
@@ -17,7 +17,7 @@ def flash_jump_left():
     time.sleep(1)
 
 
-def flash_jump_right():
+def flash_jump_right() -> None:
     serial_input.key_down("right")
     serial_input.key_down("v")
     time.sleep(0.05)
@@ -32,7 +32,7 @@ def flash_jump_right():
     time.sleep(1)
 
 
-def set_erda_fountain():
+def set_erda_fountain() -> None:
     serial_input.key_down("down")
     time.sleep(0.05)
     serial_input.key_down("z")
@@ -43,7 +43,7 @@ def set_erda_fountain():
     time.sleep(0.5)
 
 
-def activate_loot_sequence():
+def activate_loot_sequence() -> None:
     serial_input.key_down("end")
     time.sleep(1)
     serial_input.key_up("end")

@@ -5,6 +5,7 @@ from widgets.geometry import Point
 from widgets.player import Player
 import time
 from widgets.logger import init_logger
+from routines.common.movement import go_to
 
 log = init_logger(__name__)
 
@@ -32,8 +33,54 @@ class Rotation:
         skills.use_blink_shot_portal()
         log.info("Routine setup complete")
 
-    def phase_one(self):
-        pass
+    def set_summons(self):
+        skills.use_blink_shot_portal()
+        go_to(self.player, self.player.get_start_coordinates(), 1)
+        skills.set_blink_shot_portal()
+        common_skills.set_erda_fountain()
+        movement.turn_right()
+        skills.jump_covering_fire()
+        movement.turn_left()
+        skills.swift_surge()
+        skills.set_arrow_blaster()
+        skills.swift_surge()
+        skills.use_blink_shot_portal()
+        go_to(self.player, self.player.get_start_coordinates(), 1)
+        skills.set_blink_shot_portal()
+        common_skills.flash_jump_right()
+        movement.turn_left()
+        skills.swift_surge()
+        skills.swift_surge()
+        skills.swift_surge()
+        skills.swift_surge()
+        skills.swift_surge()
 
-    def phase_two(self):
-        pass
+    def do_mobbing(self):
+        go_to(self.player, self.hurricane_anchor, 1)
+        skills.jumping_hurricane_left_right(time.time() + 45)
+
+    def mobbing_cycle(self):
+        while time.time() - self.loot_timer < 120:
+            self.set_summons()
+            self.do_mobbing()
+
+    def loot_cycle(self):
+        skills.use_blink_shot_portal()
+        go_to(self.player, self.player.get_start_coordinates(), 1)
+        skills.set_blink_shot_portal()
+        common_skills.activate_loot_sequence()
+        movement.turn_left()
+        skills.jump_covering_fire()
+        # Delay for momentum
+        time.sleep(1.5)
+        skills.use_blink_shot_portal()
+        movement.turn_left()
+        skills.swift_surge()
+        skills.swift_surge()
+        skills.swift_surge()
+        skills.swift_surge()
+        movement.turn_right()
+        skills.jump_covering_fire()
+        # Delay for momentum
+        time.sleep(2)
+        self.loot_timer = time.time()

@@ -5,7 +5,7 @@ import time
 from config import JUMP_KEY, ROPE_LIFT_KEY
 
 
-def turn_left():
+def turn_left() -> None:
     serial_input.key_down("left")
     time.sleep(0.05)
     serial_input.key_up("left")
@@ -13,7 +13,7 @@ def turn_left():
     time.sleep(0.5)
 
 
-def turn_right():
+def turn_right() -> None:
     serial_input.key_down("right")
     time.sleep(0.05)
     serial_input.key_up("right")
@@ -21,13 +21,13 @@ def turn_right():
     time.sleep(0.5)
 
 
-def rope_lift():
+def rope_lift() -> None:
     serial_input.press("h")
 
     time.sleep(3)
 
 
-def down_jump():
+def down_jump() -> None:
     serial_input.key_down("down")
     time.sleep(0.05)
     serial_input.key_down("v")
@@ -38,7 +38,7 @@ def down_jump():
     time.sleep(0.5)
 
 
-def get_walk_hold_time(distance) -> float:
+def get_walk_hold_time(distance: int) -> float:
     remaining_distance = abs(distance)
 
     # Serial input has command latency, so very short taps barely move the character.
@@ -51,7 +51,7 @@ def get_walk_hold_time(distance) -> float:
     return 0.05
 
 
-def hold_key(key, hold_time) -> None:
+def hold_key(key: str, hold_time: float) -> None:
     hold_ms = max(int(hold_time * 1000), 20)
     serial_input.hold(key, hold_ms)
 
