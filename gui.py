@@ -1,11 +1,22 @@
 import tkinter as tk
+from typing import Callable
 from widgets.geometry import Point
 from widgets.minimap import Minimap
 from helpers.image_loader import get_image_boundaries
 
 class GUI:
-    def __init__(self, title: str, minimap: Minimap, geometry: str="400x400"):
+    def __init__(
+        self,
+        title: str,
+        minimap: Minimap,
+        start_engine: Callable[[], None],
+        stop_engine: Callable[[], None],
+        geometry: str = "400x400",
+    ):
         self.minimap = minimap
+        self._start_engine = start_engine
+        self._stop_engine = stop_engine
+        self._engine_running = False
 
         self.root = tk.Tk()
 
@@ -69,7 +80,7 @@ class GUI:
             text="Start Engine",
             bg="#F0FFFF",
             font=("arial", 12, "normal"),
-            # command=handler.startButtonClick,
+            command=self.toggle_engine,
         )
         self.startButton.grid(row=4, columnspan=2, sticky="S", pady=10)
 
@@ -81,18 +92,15 @@ class GUI:
         )
         self.botStatusLabel.grid(row=5, column=0, sticky="SW", padx=55)
 
-    def updateMinimapLabel(self, error: str = ""):
-        if error is not None:
-            self.miniMapLabel["text"] = error
-            self.miniMapLabel["fg"] = "#c70c0c"
-        else:
-            self.miniMapLabel["text"] = "Done"
-            self.miniMapLabel["fg"] = "#0aad20"
+    def updateMinimapLabel(self):
+        self.miniMapLabel["text"] = "Done"
+        self.miniMapLabel["fg"] = "#0aad20"
 
     def updateCurrentCoordinate(self, point: Point):
         self.coordinatesLabel["text"] = f"({point.x}, {point.y})"
 
     def updateBotStatus(self, is_running: bool):
+        self._engine_running = is_running
         if is_running:
             self.botStatusLabel["text"] = "Online"
             self.botStatusLabel["fg"] = "#0aad20"
@@ -102,6 +110,15 @@ class GUI:
             self.botStatusLabel["fg"] = "#ff0000"
             self.startButton["text"] = "Start Engine"
 
+    def toggle_engine(self):
+        if self._engine_running:
+            self._stop_engine()
+            self.updateBotStatus(False)
+        else:
+            self._start_engine()
+            self.updateBotStatus(True)
+
     def initialize_settings(self):
         minimap_boundaries = get_image_boundaries()
         self.minimap.set_grid(minimap_boundaries)
+        self.updateMinimapLabel()
