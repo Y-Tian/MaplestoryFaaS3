@@ -1,0 +1,8 @@
+numpy
+opencv-python
+pillow
+pyserial
+pyttsx3
+pywin32
+comtypes
+pyinstaller
