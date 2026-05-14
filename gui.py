@@ -114,8 +114,11 @@ class GUI:
     def updatePlayerCurrentCoordinates(self, point: Point):
         self.playerCoordinatesLabel["text"] = f"({point.x}, {point.y})"
 
-    def updateRuneCurrentCoordinates(self, point: Point):
-        self.runeCoordinatesLabel["text"] = f"({point.x}, {point.y})"
+    def updateRuneCurrentCoordinates(self, point: Point | None):
+        if point:
+            self.runeCoordinatesLabel["text"] = f"({point.x}, {point.y})"
+        else:
+            self.runeCoordinatesLabel["text"] = "(null,null)"
 
     def refresh_live_info(self):
         self.updatePlayerCurrentCoordinates(self.player.get_coordinates())
