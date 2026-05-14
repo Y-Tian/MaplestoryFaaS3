@@ -1,3 +1,5 @@
+from datetime import datetime
+from pathlib import Path
 from widgets.geometry import Point
 from widgets.player import Player
 from widgets.rune import Rune
@@ -49,6 +51,11 @@ def get_rune_screenshot() -> Image.Image | None:
                 rune_section_bottom_right_y,
             )
         )
+
+        rune_screenshot.save(
+            Path("backups") / f"rune_attempt_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        )
+
         return rune_screenshot
 
     return None
