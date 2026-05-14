@@ -17,3 +17,5 @@ HANDSHAKE_TIMEOUT_SECONDS = 2.0
 # Common key bindings
 JUMP_KEY = "v"
 ROPE_LIFT_KEY = "h"
+FMA_KEY = "r"
+RUNE_KEY = "y"

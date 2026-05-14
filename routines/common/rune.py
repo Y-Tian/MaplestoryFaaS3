@@ -1,8 +1,9 @@
+from widgets.geometry import Point
 from widgets.player import Player
 from widgets.rune import Rune
 from routines.common import movement
 import win32gui
-from config import ACTIVE_WINDOW_NAME
+from config import ACTIVE_WINDOW_NAME, FMA_KEY, RUNE_KEY
 from PIL import ImageGrab, Image
 from typing import List
 import widgets.serial_input as serial_input
@@ -14,6 +15,11 @@ log = init_logger(__name__)
 
 def detect_rune_present(rune: Rune) -> bool:
     return rune.get_coordinates() is not None
+
+def is_in_range(target_x: float, target_y: float, player_coords: Point, wanted_range: float) -> bool:
+    x_range = abs(target_x - player_coords.x)
+    y_range = abs(target_y - player_coords.y)
+    return x_range < wanted_range and y_range < wanted_range
 
 def get_rune_screenshot() -> Image.Image | None:
     active_window = win32gui.FindWindow(None, ACTIVE_WINDOW_NAME)
@@ -75,6 +81,7 @@ def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
             to_add = True
             rgb_pixel = screenshot.getpixel((x, y))
 
+            # grabs the green pixels from the rune arrows
             if 235 <= rgb_pixel[1] <= 255 and 0 < rgb_pixel[0] < 50 and rgb_pixel[2] < 200:
                 for arrow in arrow_sequence:
                     if abs(arrow[1] - x) <= 25:
@@ -91,6 +98,19 @@ def solve(player: Player, rune: Rune):
     if not rune_coords:
         return
     movement.go_to(player, rune_coords, buffer_distance=1.5)
+
+    # Double check that we are next to the rune as we need to stand next to it
+    player_coords = player.get_coordinates()
+    if not is_in_range(rune_coords.x, rune_coords.y, player_coords, wanted_range=4):
+        movement.go_to(player, rune_coords, buffer_distance=2)
+
+    # Clear monsters nearby before attempting to solve
+    serial_input.press(FMA_KEY)
+    # Delay for general FMA animation
+    time.sleep(1.2)
+    serial_input.press(RUNE_KEY)
+    # Delay for rune puzzle opening animation
+    time.sleep(0.8)
 
     rune_screenshot = get_rune_screenshot()
     if rune_screenshot:
