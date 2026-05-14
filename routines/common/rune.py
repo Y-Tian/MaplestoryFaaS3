@@ -137,7 +137,7 @@ def solve(player: Player, rune: Rune):
     rune_screenshot = get_rune_screenshot()
     if rune_screenshot:
         arrow_key_sequence = get_rune_arrow_sequence(rune_screenshot)
-        if arrow_key_sequence == 4:
+        if len(arrow_key_sequence) == 4:
             for arrow_key in arrow_key_sequence:
                 # Delay for input processing on the rune puzzle
                 time.sleep(random.uniform(0.12, 0.22))
