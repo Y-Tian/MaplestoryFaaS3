@@ -12,6 +12,7 @@ import routines.common.pet as pet
 
 log = init_logger(__name__)
 
+
 class Rotation:
     def __init__(self, player: Player, anchor: Anchor) -> None:
         self.player = player

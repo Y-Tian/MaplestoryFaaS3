@@ -252,7 +252,9 @@ class GUI:
 
         rotation_cls = getattr(module, "Rotation", None)
         if rotation_cls is None:
-            messagebox.showerror("Invalid routine", f"{module_path} has no Rotation class.")
+            messagebox.showerror(
+                "Invalid routine", f"{module_path} has no Rotation class."
+            )
             return
 
         try:
@@ -262,4 +264,6 @@ class GUI:
                 raise AttributeError("Rotation.setup is missing or not callable.")
             setup_fn()
         except Exception as exc:
-            messagebox.showerror("Setup failed", f"Failed while running setup():\n{exc}")
+            messagebox.showerror(
+                "Setup failed", f"Failed while running setup():\n{exc}"
+            )
