@@ -2,7 +2,7 @@ import threading
 from widgets.logger import init_logger
 from widgets.player import Player
 from widgets.rune import Rune
-from routines.common import buff, pet, rune
+from routines.common import rune
 
 log = init_logger(__name__)
 
