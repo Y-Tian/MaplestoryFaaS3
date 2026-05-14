@@ -1,9 +1,12 @@
+# GUI and main configuration settings
 GUI_NAME = "BacklitManager"
 
+# Image recognition settings
 PLAYER_ICON_MATCH_THRESHOLD = 0.30
 RUNE_ICON_MATCH_THRESHOLD = 0.22
 RANDOM_ICON_MATCH_THRESHOLD = 0.22
 
+# Serial communication settings
 DEFAULT_BAUDRATE = 115200
 DEFAULT_PORT = "COM3"
 PAUSE = 0.0
