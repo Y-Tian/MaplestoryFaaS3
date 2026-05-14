@@ -5,12 +5,15 @@ import threading
 from widgets.logger import init_logger
 from typing import Dict, Any
 from config import GUI_NAME
+from widgets.player import Player
 
 log = init_logger(__name__)
 
 if __name__ == "__main__":
     minimap = Minimap([])
-    game_monitor = GameMonitor(minimap)
+    player = Player()
+
+    game_monitor = GameMonitor(minimap, player)
     engine_state: Dict[str, Any] = {"thread": None}
     stop_event = threading.Event()
 
@@ -29,7 +32,7 @@ if __name__ == "__main__":
         log.info("Stop requested")
         stop_event.set()
 
-    gui = GUI(GUI_NAME, minimap, start_engine, stop_engine)
+    gui = GUI(GUI_NAME, minimap, player, start_engine, stop_engine)
     try:
         gui.root.mainloop()
     finally:

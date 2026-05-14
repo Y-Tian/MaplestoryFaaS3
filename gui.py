@@ -3,12 +3,14 @@ from typing import Callable
 from widgets.geometry import Point
 from widgets.minimap import Minimap
 from helpers.image_loader import get_image_boundaries
+from widgets.player import Player
 
 class GUI:
     def __init__(
         self,
         title: str,
         minimap: Minimap,
+        player: Player,
         start_engine: Callable[[], None],
         stop_engine: Callable[[], None],
         geometry: str = "400x400",
