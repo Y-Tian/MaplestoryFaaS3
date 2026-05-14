@@ -29,10 +29,8 @@ class GameMonitor:
         while not stop_event.is_set():
             grid = self.minimap.get_grid()
             if grid:
-                log.info(f"Current minimap grid: {grid}")
-
-            self.set_minimap_image()
-            self.update_player_coordinates()
+                self.set_minimap_image()
+                self.update_player_coordinates()
 
             # Yield CPU and check stop status regularly.
             stop_event.wait(0.1)

@@ -16,6 +16,7 @@ class GUI:
         geometry: str = "400x400",
     ):
         self.minimap = minimap
+        self.player = player
         self._start_engine = start_engine
         self._stop_engine = stop_engine
         self._engine_running = False
@@ -93,6 +94,7 @@ class GUI:
             self.root, text="Offline", fg="#FF0000", font=("arial", 10, "normal")
         )
         self.botStatusLabel.grid(row=5, column=0, sticky="SW", padx=55)
+        self.root.after(500, self._refresh_live_info)
 
     def updateMinimapLabel(self):
         self.miniMapLabel["text"] = "Done"
@@ -100,6 +102,10 @@ class GUI:
 
     def updateCurrentCoordinate(self, point: Point):
         self.coordinatesLabel["text"] = f"({point.x}, {point.y})"
+
+    def _refresh_live_info(self):
+        self.updateCurrentCoordinate(self.player.get_coordinates())
+        self.root.after(500, self._refresh_live_info)
 
     def updateBotStatus(self, is_running: bool):
         self._engine_running = is_running
