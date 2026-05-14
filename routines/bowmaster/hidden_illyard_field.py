@@ -4,6 +4,9 @@ import routines.common.movement as movement
 from widgets.geometry import Point
 from widgets.player import Player
 import time
+from widgets.logger import init_logger
+
+log = init_logger(__name__)
 
 class Rotation:
     def __init__(self, player: Player) -> None:
@@ -15,6 +18,7 @@ class Rotation:
     def setup(self):
         # Delay for the user to switch to the game window after clicking "Setup Routine"
         time.sleep(3)
+        log.info("Setting up routine")
         self.player.set_start_coordinates(self.player.get_coordinates())
         skills.set_blink_shot_portal()
         common_skills.flash_jump_right()
@@ -26,6 +30,7 @@ class Rotation:
         skills.swift_surge()
         self.hurricane_anchor = self.player.get_coordinates()
         skills.use_blink_shot_portal()
+        log.info("Routine setup complete")
 
     def phase_one(self):
         pass
