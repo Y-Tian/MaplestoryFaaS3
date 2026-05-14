@@ -48,7 +48,7 @@ def move_vertical(direction_key: str) -> None:
         # Delay for air time momentum
         time.sleep(1.1)
 
-def go_to(player: Player, target_point: Point, buffer_distance: int = 0) -> None:
+def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> None:
     current_player_x = player.get_coordinates().x
     delta_x = target_point.x - current_player_x
     while abs(delta_x) > buffer_distance:

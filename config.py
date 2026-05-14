@@ -1,5 +1,6 @@
 # GUI and main configuration settings
 GUI_NAME = "BacklitManager"
+ACTIVE_WINDOW_NAME = "MapleStory"
 
 # Image recognition settings
 PLAYER_ICON_MATCH_THRESHOLD = 0.30
