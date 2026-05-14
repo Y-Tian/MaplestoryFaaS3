@@ -2,7 +2,7 @@ import widgets.serial_input as serial_input
 import time
 
 
-def fj_left():
+def flash_jump_left():
     serial_input.key_down("left")
     serial_input.key_down("v")
     time.sleep(0.05)
@@ -17,7 +17,7 @@ def fj_left():
     time.sleep(1)
 
 
-def fj_right():
+def flash_jump_right():
     serial_input.key_down("right")
     serial_input.key_down("v")
     time.sleep(0.05)
