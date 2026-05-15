@@ -113,11 +113,17 @@ def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
 
 def hard_reset_rune_spinning_arrows() -> None:
     time.sleep(0.5)
-    serial_input.press(CASH_SHOP_KEY)
+    serial_input.key_down(CASH_SHOP_KEY)
+    time.sleep(0.2)
+    serial_input.key_up(CASH_SHOP_KEY)
     time.sleep(12)
-    serial_input.press("esc")
+    serial_input.key_down("esc")
+    time.sleep(0.2)
+    serial_input.key_up("esc")
     time.sleep(1)
-    serial_input.press("enter")
+    serial_input.key_down("enter")
+    time.sleep(0.2)
+    serial_input.key_up("enter")
     time.sleep(7)
 
 
@@ -129,6 +135,8 @@ def solve(player: Player, rune: Rune) -> bool:
 
     # Double check that we are next to the rune as we need to stand next to it
     player_coords = player.get_coordinates()
+    if not player_coords:
+        return False
     if not is_in_range(rune_coords.x, rune_coords.y, player_coords, wanted_range=4):
         movement.go_to(player, rune_coords, buffer_distance=2)
 
@@ -155,8 +163,10 @@ def solve(player: Player, rune: Rune) -> bool:
                 f"Expected 4 arrows for rune puzzle, but found {len(arrow_key_sequence)}. Sequence: {arrow_key_sequence}"
             )
 
-    # Reset the rune after the attempt (assume it succeeded)
-    rune.set_coordinates(None)
+    # Only clear rune coordinates when we completed an input sequence.
+    # On failure, keep the current state so the controller can retry.
+    if solve_success:
+        rune.set_coordinates(None)
     # Reset the player position after the attempt
     movement.go_to(player, player.get_start_coordinates(), buffer_distance=1)
     return solve_success

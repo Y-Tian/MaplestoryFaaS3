@@ -29,25 +29,32 @@ class PrimaryController:
         log.info("Player coordinates not detected, escaping potential whiteroom...")
         escape.whiteroom()
 
-    def solve_rune_if_present(self):
+    def solve_rune_until_solved(self, stop_event: threading.Event):
         if not rune.detect_rune_present(self.rune):
             return
 
-        log.info("Rune detected, solving...")
-        solved = rune.solve(self.player, self.rune)
-        if solved:
-            self._consecutive_rune_failures = 0
-            return
+        log.info("Rune detected, prioritizing solve attempts...")
+        while not stop_event.is_set() and rune.detect_rune_present(self.rune):
+            solved = rune.solve(self.player, self.rune)
+            if solved:
+                self._consecutive_rune_failures = 0
+                log.info("Rune solve input sequence sent successfully.")
+                return
 
-        self._consecutive_rune_failures += 1
-        log.warning(
-            "Rune solve failed (%s/3 consecutive failures)",
-            self._consecutive_rune_failures,
-        )
-        if self._consecutive_rune_failures >= 3:
-            log.warning("Rune solve failed 3 times in a row. Running hard rune reset.")
-            rune.hard_reset_rune_spinning_arrows()
-            self._consecutive_rune_failures = 0
+            self._consecutive_rune_failures += 1
+            log.warning(
+                "Rune solve failed (%s/3 consecutive failures)",
+                self._consecutive_rune_failures,
+            )
+            if self._consecutive_rune_failures >= 3:
+                log.warning(
+                    "Rune solve failed 3 times in a row. Running hard rune reset."
+                )
+                rune.hard_reset_rune_spinning_arrows()
+                self._consecutive_rune_failures = 0
+
+            # Brief yield before the next retry to avoid tight retry loops.
+            stop_event.wait(0.1)
 
     def escape_enemy_if_present(self):
         if self.enemy.get_coordinates():
@@ -56,9 +63,9 @@ class PrimaryController:
         log.info("Enemy detected, escaping...")
         escape.to_town()
 
-    def check_defaults(self):
+    def check_defaults(self, stop_event: threading.Event):
         self.escape_whiteroom_if_present()
-        self.solve_rune_if_present()
+        self.solve_rune_until_solved(stop_event)
         self.escape_enemy_if_present()
 
     def run(self, stop_event: threading.Event):
@@ -68,7 +75,7 @@ class PrimaryController:
         routine = Rotation(self.player, self.anchor)
         while not stop_event.is_set():
             # Invoke a known set of routines in sequence
-            self.check_defaults()
+            self.check_defaults(stop_event)
 
             """
             Add routine phase 1 below
@@ -80,7 +87,7 @@ class PrimaryController:
             Add routine phase 1 above
             """
 
-            self.check_defaults()
+            self.check_defaults(stop_event)
 
             """
             Add routine phase 2 below

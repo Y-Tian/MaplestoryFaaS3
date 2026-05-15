@@ -63,18 +63,19 @@ def set_blink_shot_portal(initial = False) -> None:
 
 def jumping_hurricane_left_right(duration: float) -> None:
     serial_input.key_down("x")
+    serial_input.key_down("x")
 
     while time.time() < duration:
         time.sleep(0.07)
         serial_input.key_down("v")
-        time.sleep(0.05)
+        time.sleep(0.07)
         serial_input.key_down("left")
         serial_input.key_up("left")
         serial_input.key_up("v")
 
         time.sleep(0.07)
         serial_input.key_down("v")
-        time.sleep(0.05)
+        time.sleep(0.07)
         serial_input.key_down("right")
         serial_input.key_up("right")
         serial_input.key_up("v")

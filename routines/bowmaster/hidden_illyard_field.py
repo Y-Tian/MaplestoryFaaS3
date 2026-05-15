@@ -36,6 +36,9 @@ class Rotation:
         skills.swift_surge()
         skills.swift_surge()
         skills.swift_surge()
+        player_coords = self.player.get_coordinates()
+        if not player_coords:
+            return
         self.anchor.set_coordinates(player_coords)
         skills.use_blink_shot_portal()
         log.info("Routine setup complete")
