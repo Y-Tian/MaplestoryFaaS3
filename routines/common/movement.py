@@ -3,6 +3,7 @@ from widgets.player import Player
 import widgets.serial_input as serial_input
 import time
 from config import JUMP_KEY, ROPE_LIFT_KEY
+import routines.common.skills as common_skills 
 
 
 def turn_left() -> None:
@@ -58,8 +59,10 @@ def hold_key(key: str, hold_time: float) -> None:
 
 def move_horizontal(direction_key: str, distance: int) -> None:
     if abs(distance) >= 30:
-        # Swap this out for flash jump/teleport when available (import as map_routine.fast_move_left/right)
-        hold_key(direction_key, get_walk_hold_time(distance))
+        if direction_key == "left":
+            common_skills.flash_jump_left()
+        else:
+            common_skills.flash_jump_right()
     else:
         hold_key(direction_key, get_walk_hold_time(distance))
 
@@ -75,7 +78,7 @@ def move_vertical(direction_key: str) -> None:
         serial_input.press(ROPE_LIFT_KEY)
         serial_input.key_up(JUMP_KEY)
         # Delay for rope lift momentum
-        time.sleep(1.1)
+        time.sleep(1.5)
     else:
         serial_input.key_down("down")
         # Delay to slide down a rope, if there is one (assumption)
@@ -87,19 +90,29 @@ def move_vertical(direction_key: str) -> None:
 
 
 def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> None:
-    current_player_x = player.get_coordinates().x
+    player_coords = player.get_coordinates()
+    if not player_coords:
+        return
+
+    current_player_x = player_coords.x
     delta_x = target_point.x - current_player_x
     while abs(delta_x) > buffer_distance:
         direction = "right" if delta_x > 0 else "left"
         move_horizontal(direction, delta_x)
-        current_player_x = player.get_coordinates().x
+        player_coords = player.get_coordinates()
+        if not player_coords:
+            return
+        current_player_x = player_coords.x
         delta_x = target_point.x - current_player_x
 
-    current_player_y = player.get_coordinates().y
+    current_player_y = player_coords.y
     delta_y = target_point.y - current_player_y
     # Add some wiggle room for vertical movement
     while abs(delta_y) > (buffer_distance + 5):
         direction = "down" if delta_y > 0 else "up"
         move_vertical(direction)
-        current_player_y = player.get_coordinates().y
+        player_coords = player.get_coordinates()
+        if not player_coords:
+            return
+        current_player_y = player_coords.y
         delta_y = target_point.y - current_player_y
