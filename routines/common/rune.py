@@ -12,6 +12,7 @@ import widgets.serial_input as serial_input
 import time
 import random
 from widgets.logger import init_logger
+from config import CASH_SHOP_KEY
 
 log = init_logger(__name__)
 
@@ -114,8 +115,16 @@ def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
 
     return sorted(arrow_sequence, key=get_arrow_sequence_key)
 
+def hard_reset_rune_spinning_arrows() -> None:
+    time.sleep(0.5)
+    serial_input.press(CASH_SHOP_KEY)
+    time.sleep(12)
+    serial_input.press("esc")
+    time.sleep(1)
+    serial_input.press("enter")
+    time.sleep(7)
 
-def solve(player: Player, rune: Rune):
+def solve(player: Player, rune: Rune) -> None:
     rune_coords = rune.get_coordinates()
     if not rune_coords:
         return
