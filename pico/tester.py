@@ -5,7 +5,6 @@ import time
 import serial
 from serial.tools import list_ports
 
-
 DEFAULT_PORT = "COM3"
 DEFAULT_BAUDRATE = 115200
 STARTUP_DELAY_SECONDS = 2.0

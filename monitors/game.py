@@ -35,6 +35,8 @@ class GameMonitor:
         if player_coord:
             self.player.set_coordinates(player_coord)
 
+        self.player.set_coordinates(None)
+
     def update_rune_coordinates(self):
         if self.rune.icon is None or self.minimap_image is None:
             self._rune_first_seen_at = None

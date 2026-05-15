@@ -12,10 +12,10 @@ class Player:
         # Set by the individual routines to know where the player started for reference
         self.start_coord = Point()
 
-    def set_coordinates(self, point: Point) -> None:
+    def set_coordinates(self, point: Point | None) -> None:
         self.coord = point
 
-    def get_coordinates(self) -> Point:
+    def get_coordinates(self) -> Point | None:
         return self.coord
 
     def set_start_coordinates(self, point: Point) -> None:

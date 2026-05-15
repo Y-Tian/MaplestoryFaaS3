@@ -167,8 +167,11 @@ class GUI:
         self.miniMapLabel["text"] = "Done"
         self.miniMapLabel["fg"] = "#0aad20"
 
-    def updatePlayerCurrentCoordinates(self, point: Point):
-        self.playerCoordinatesLabel["text"] = f"({point.x}, {point.y})"
+    def updatePlayerCurrentCoordinates(self, point: Point | None):
+        if point:
+            self.playerCoordinatesLabel["text"] = f"({point.x}, {point.y})"
+        else:
+            self.runeCoordinatesLabel["text"] = "(null,null)"
 
     def updateStartCurrentCoordinates(self, point: Point):
         self.startCoordinatesLabel["text"] = f"({point.x}, {point.y})"

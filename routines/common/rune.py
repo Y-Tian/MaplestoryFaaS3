@@ -40,13 +40,15 @@ def get_rune_screenshot() -> Image.Image | None:
         # Capture the center third (x-axis) and middle half (y-axis) of the game window
         rune_section_top_left_x = int(top_left_x + (window_width / 3))
         rune_section_top_left_y = int(top_left_y + (window_height / 4))
-        rune_section_bottom_right_x = int(rune_section_top_left_x + (window_width/ 3))
+        rune_section_bottom_right_x = int(rune_section_top_left_x + (window_width / 3))
         rune_section_bottom_right_y = int(rune_section_top_left_y + (window_height / 4))
 
-        rune_screenshot = get_screenshot([
-            Point(rune_section_top_left_x, rune_section_top_left_y),
-            Point(rune_section_bottom_right_x, rune_section_bottom_right_y)
-        ])
+        rune_screenshot = get_screenshot(
+            [
+                Point(rune_section_top_left_x, rune_section_top_left_y),
+                Point(rune_section_bottom_right_x, rune_section_bottom_right_y),
+            ]
+        )
 
         save_screenshot(rune_screenshot, "backups/rune")
 
@@ -108,6 +110,7 @@ def get_rune_arrow_sequence(screenshot: Image.Image) -> List[str]:
 
     return sorted(arrow_sequence, key=get_arrow_sequence_key)
 
+
 def hard_reset_rune_spinning_arrows() -> None:
     time.sleep(0.5)
     serial_input.press(CASH_SHOP_KEY)
@@ -116,6 +119,7 @@ def hard_reset_rune_spinning_arrows() -> None:
     time.sleep(1)
     serial_input.press("enter")
     time.sleep(7)
+
 
 def solve(player: Player, rune: Rune) -> bool:
     rune_coords = rune.get_coordinates()

@@ -13,7 +13,9 @@ log = init_logger(__name__)
 
 
 class PrimaryController:
-    def __init__(self, player: Player, rune: Rune, enemy: Enemy, anchor: Anchor) -> None:
+    def __init__(
+        self, player: Player, rune: Rune, enemy: Enemy, anchor: Anchor
+    ) -> None:
         self.player = player
         self.rune = rune
         self.enemy = enemy
@@ -21,9 +23,9 @@ class PrimaryController:
         self._consecutive_rune_failures = 0
 
     def escape_whiteroom_if_present(self):
-        if not self.player.get_coordinates():
+        if self.player.get_coordinates():
             return
-        
+
         log.info("Player coordinates not detected, escaping potential whiteroom...")
         escape.whiteroom()
 
@@ -43,16 +45,14 @@ class PrimaryController:
             self._consecutive_rune_failures,
         )
         if self._consecutive_rune_failures >= 3:
-            log.warning(
-                "Rune solve failed 3 times in a row. Running hard rune reset."
-            )
+            log.warning("Rune solve failed 3 times in a row. Running hard rune reset.")
             rune.hard_reset_rune_spinning_arrows()
             self._consecutive_rune_failures = 0
 
     def escape_enemy_if_present(self):
-        if not self.enemy.get_coordinates():
+        if self.enemy.get_coordinates():
             return
-        
+
         log.info("Enemy detected, escaping...")
         escape.to_town()
 
