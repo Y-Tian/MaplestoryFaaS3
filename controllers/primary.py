@@ -1,4 +1,5 @@
 import threading
+from widgets.enemy import Enemy
 from widgets.logger import init_logger
 from widgets.player import Player
 from widgets.rune import Rune
@@ -6,18 +7,20 @@ from routines.common import rune
 from widgets.anchor import Anchor
 from routines.bowmaster.hidden_illyard_field import Rotation
 import time
+from routines.common import escape
 
 log = init_logger(__name__)
 
 
 class PrimaryController:
-    def __init__(self, player: Player, rune: Rune, anchor: Anchor) -> None:
+    def __init__(self, player: Player, rune: Rune, enemy: Enemy, anchor: Anchor) -> None:
         self.player = player
         self.rune = rune
+        self.enemy = enemy
         self.anchor = anchor
         self._consecutive_rune_failures = 0
 
-    def _solve_rune_if_present(self):
+    def solve_rune_if_present(self):
         if not rune.detect_rune_present(self.rune):
             return
 
@@ -39,6 +42,17 @@ class PrimaryController:
             rune.hard_reset_rune_spinning_arrows()
             self._consecutive_rune_failures = 0
 
+    def escape_enemy_if_present(self):
+        if not self.enemy.get_coordinates():
+            return
+        
+        log.info("Enemy detected, escaping...")
+        escape.to_town()
+
+    def check_defaults(self):
+        self.solve_rune_if_present()
+        self.escape_enemy_if_present()
+
     def run(self, stop_event: threading.Event):
         # Delay for user to switch to the game window after starting the thread
         time.sleep(3)
@@ -46,7 +60,7 @@ class PrimaryController:
         routine = Rotation(self.player, self.anchor)
         while not stop_event.is_set():
             # Invoke a known set of routines in sequence
-            self._solve_rune_if_present()
+            self.check_defaults()
 
             """
             Add routine phase 1 below
@@ -58,7 +72,7 @@ class PrimaryController:
             Add routine phase 1 above
             """
 
-            self._solve_rune_if_present()
+            self.check_defaults()
 
             """
             Add routine phase 2 below

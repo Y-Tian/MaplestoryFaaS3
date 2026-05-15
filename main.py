@@ -9,6 +9,7 @@ from config import GUI_NAME
 from widgets.player import Player
 from widgets.rune import Rune
 from widgets.anchor import Anchor
+from widgets.enemy import Enemy
 
 log = init_logger(__name__)
 
@@ -17,9 +18,10 @@ if __name__ == "__main__":
     player = Player()
     rune = Rune()
     anchor = Anchor()
+    enemy = Enemy()
 
-    game_monitor = GameMonitor(minimap, player, rune)
-    primary_controller = PrimaryController(player, rune, anchor)
+    game_monitor = GameMonitor(minimap, player, rune, enemy)
+    primary_controller = PrimaryController(player, rune, enemy, anchor)
     monitor_state: Dict[str, Any] = {"thread": None, "stop_event": threading.Event()}
     controller_state: Dict[str, Any] = {"thread": None, "stop_event": threading.Event()}
 

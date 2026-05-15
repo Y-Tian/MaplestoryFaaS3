@@ -1,3 +1,4 @@
+from widgets.enemy import Enemy
 from widgets.minimap import Minimap
 import threading
 import time
@@ -12,11 +13,12 @@ log = init_logger(__name__)
 
 
 class GameMonitor:
-    def __init__(self, minimap: Minimap, player: Player, rune: Rune):
+    def __init__(self, minimap: Minimap, player: Player, rune: Rune, enemy: Enemy):
         self.minimap = minimap
         self.minimap_image = None
         self.player = player
         self.rune = rune
+        self.enemy = enemy
         self._rune_first_seen_at: float | None = None
         self._pending_rune_coord = None
 
@@ -72,6 +74,16 @@ class GameMonitor:
             self._pending_rune_coord = None
             self.rune.set_coordinates(None)
 
+    def update_enemy_coordinates(self):
+        if self.enemy.icon is None or self.minimap_image is None:
+            return
+
+        enemy_coord = find_coordinates_by_template(
+            self.minimap_image, self.enemy.icon, self.enemy.icon_match_threshold
+        )
+        if enemy_coord:
+            self.enemy.set_coordinates(enemy_coord)
+
     def run(self, stop_event: threading.Event):
         log.info("Thread started")
         while not stop_event.is_set():
@@ -80,6 +92,7 @@ class GameMonitor:
                 self.set_minimap_image()
                 self.update_player_coordinates()
                 self.update_rune_coordinates()
+                self.update_enemy_coordinates()
 
             # Yield CPU and check stop status regularly.
             stop_event.wait(0.1)
