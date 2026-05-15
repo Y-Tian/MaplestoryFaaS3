@@ -124,10 +124,10 @@ def hard_reset_rune_spinning_arrows() -> None:
     serial_input.press("enter")
     time.sleep(7)
 
-def solve(player: Player, rune: Rune) -> None:
+def solve(player: Player, rune: Rune) -> bool:
     rune_coords = rune.get_coordinates()
     if not rune_coords:
-        return
+        return False
     movement.go_to(player, rune_coords, buffer_distance=1.5)
 
     # Double check that we are next to the rune as we need to stand next to it
@@ -143,6 +143,7 @@ def solve(player: Player, rune: Rune) -> None:
     # Delay for rune puzzle opening animation
     time.sleep(0.8)
 
+    solve_success = False
     rune_screenshot = get_rune_screenshot()
     if rune_screenshot:
         arrow_key_sequence = get_rune_arrow_sequence(rune_screenshot)
@@ -151,6 +152,7 @@ def solve(player: Player, rune: Rune) -> None:
                 # Delay for input processing on the rune puzzle
                 time.sleep(random.uniform(0.12, 0.22))
                 serial_input.press(arrow_key[0])
+            solve_success = True
         else:
             log.error(
                 f"Expected 4 arrows for rune puzzle, but found {len(arrow_key_sequence)}. Sequence: {arrow_key_sequence}"
@@ -160,3 +162,4 @@ def solve(player: Player, rune: Rune) -> None:
     rune.set_coordinates(None)
     # Reset the player position after the attempt
     movement.go_to(player, player.get_start_coordinates(), buffer_distance=1)
+    return solve_success
