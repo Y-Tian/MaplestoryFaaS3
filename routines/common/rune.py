@@ -1,18 +1,17 @@
-from datetime import datetime
-from pathlib import Path
 from widgets.geometry import Point
 from widgets.player import Player
 from widgets.rune import Rune
 from routines.common import movement
 import win32gui
 from config import ACTIVE_WINDOW_NAME, FMA_KEY, RUNE_KEY
-from PIL import ImageGrab, Image
+from PIL import Image
 from typing import List
 import widgets.serial_input as serial_input
 import time
 import random
 from widgets.logger import init_logger
 from config import CASH_SHOP_KEY
+from helpers.screenshot import get_screenshot, save_screenshot
 
 log = init_logger(__name__)
 
@@ -39,23 +38,17 @@ def get_rune_screenshot() -> Image.Image | None:
         window_width = bottom_right_x - top_left_x
 
         # Capture the center third (x-axis) and middle half (y-axis) of the game window
-        rune_section_top_left_x = top_left_x + (window_width / 3)
-        rune_section_top_left_y = top_left_y + (window_height / 4)
-        rune_section_bottom_right_x = rune_section_top_left_x + (window_width/ 3)
-        rune_section_bottom_right_y = rune_section_top_left_y + (window_height / 4)
+        rune_section_top_left_x = int(top_left_x + (window_width / 3))
+        rune_section_top_left_y = int(top_left_y + (window_height / 4))
+        rune_section_bottom_right_x = int(rune_section_top_left_x + (window_width/ 3))
+        rune_section_bottom_right_y = int(rune_section_top_left_y + (window_height / 4))
 
-        rune_screenshot = ImageGrab.grab(
-            bbox=(
-                rune_section_top_left_x,
-                rune_section_top_left_y,
-                rune_section_bottom_right_x,
-                rune_section_bottom_right_y,
-            )
-        )
+        rune_screenshot = get_screenshot([
+            Point(rune_section_top_left_x, rune_section_top_left_y),
+            Point(rune_section_bottom_right_x, rune_section_bottom_right_y)
+        ])
 
-        rune_screenshot.save(
-            Path("backups") / f"rune_attempt_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-        )
+        save_screenshot(rune_screenshot, "backups/rune", "rune_attempt")
 
         return rune_screenshot
 

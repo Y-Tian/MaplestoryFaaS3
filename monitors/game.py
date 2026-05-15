@@ -23,7 +23,7 @@ class GameMonitor:
         self._pending_rune_coord = None
 
     def set_minimap_image(self) -> None:
-        self.minimap_image = get_screenshot(self.minimap)
+        self.minimap_image = get_screenshot(self.minimap.get_grid())
 
     def update_player_coordinates(self):
         if self.player.icon is None or self.minimap_image is None:

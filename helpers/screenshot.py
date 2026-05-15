@@ -1,15 +1,22 @@
+from datetime import datetime
+from pathlib import Path
+
 from PIL import ImageGrab, Image
-from widgets.minimap import Minimap
+from widgets.geometry import Point
+from typing import List
 
 
-def get_screenshot(minimap: Minimap) -> Image.Image:
+def get_screenshot(matrix: List[Point]) -> Image.Image:
     screenshot = ImageGrab.grab(
         bbox=(
-            minimap.grid[0].x,
-            minimap.grid[0].y,
-            minimap.grid[1].x,
-            minimap.grid[1].y,
+            matrix[0].x,
+            matrix[0].y,
+            matrix[1].x,
+            matrix[1].y,
         )
     )
 
     return screenshot
+
+def save_screenshot(screenshot: Image.Image, folder: str, filename: str) -> None:
+    screenshot.save(f"{Path(folder)}/{filename}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png")
