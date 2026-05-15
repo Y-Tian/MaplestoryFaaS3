@@ -1,5 +1,5 @@
 import numpy as np
-import cv2
+import zlib
 from widgets.geometry import Point
 from PIL import Image
 
@@ -7,24 +7,34 @@ from PIL import Image
 def find_coordinates_by_template(
     background: Image.Image, template: Image.Image, threshold: float
 ) -> Point | None:
-    background_rgb = background.convert("RGB")
-    template_rgb = template.convert("RGB")
+    # Kept for backward compatibility with existing callers/config.
+    _ = threshold
 
-    background_arr = np.array(background_rgb, dtype=np.uint8)
-    template_arr = np.array(template_rgb, dtype=np.uint8)
+    background_arr = np.array(background.convert("RGB"), dtype=np.uint8)
+    template_arr = np.array(template.convert("RGB"), dtype=np.uint8)
 
-    method = cv2.TM_SQDIFF_NORMED  # type: ignore
+    bg_h, bg_w = background_arr.shape[:2]
+    tpl_h, tpl_w = template_arr.shape[:2]
 
-    background_bgr = cv2.cvtColor(background_arr, cv2.COLOR_RGB2BGR)  # type: ignore
-    template_bgr = cv2.cvtColor(template_arr, cv2.COLOR_RGB2BGR)  # type: ignore
-
-    result = cv2.matchTemplate(background_bgr, template_bgr, method)  # type: ignore
-    min_score = float(np.amin(result))
-
-    if min_score > threshold:
+    if tpl_h > bg_h or tpl_w > bg_w:
         return None
 
-    _, _, min_loc, _ = cv2.minMaxLoc(result)  # type: ignore
-    match_x, match_y = min_loc
+    template_hash = zlib.crc32(template_arr.tobytes())
+    first_px = template_arr[0, 0]
+    max_y = bg_h - tpl_h + 1
+    max_x = bg_w - tpl_w + 1
 
-    return Point(x=match_x, y=match_y)
+    for y in range(max_y):
+        row = background_arr[y : y + tpl_h]
+        for x in range(max_x):
+            if not np.array_equal(background_arr[y, x], first_px):
+                continue
+
+            patch = row[:, x : x + tpl_w]
+            if zlib.crc32(patch.tobytes()) != template_hash:
+                continue
+
+            if np.array_equal(patch, template_arr):
+                return Point(x=x, y=y)
+
+    return None
