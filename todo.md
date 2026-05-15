@@ -1,2 +1,1 @@
 - bundle with PyInstaller (logging overhaul + file paths)
-- lost player coordinates (white room detect)

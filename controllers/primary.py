@@ -20,6 +20,13 @@ class PrimaryController:
         self.anchor = anchor
         self._consecutive_rune_failures = 0
 
+    def escape_whiteroom_if_present(self):
+        if not self.player.get_coordinates():
+            return
+        
+        log.info("Player coordinates not detected, escaping potential whiteroom...")
+        escape.whiteroom()
+
     def solve_rune_if_present(self):
         if not rune.detect_rune_present(self.rune):
             return
@@ -50,6 +57,7 @@ class PrimaryController:
         escape.to_town()
 
     def check_defaults(self):
+        self.escape_whiteroom_if_present()
         self.solve_rune_if_present()
         self.escape_enemy_if_present()
 

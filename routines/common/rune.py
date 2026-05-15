@@ -48,7 +48,7 @@ def get_rune_screenshot() -> Image.Image | None:
             Point(rune_section_bottom_right_x, rune_section_bottom_right_y)
         ])
 
-        save_screenshot(rune_screenshot, "backups/rune", "rune_attempt")
+        save_screenshot(rune_screenshot, "backups/rune")
 
         return rune_screenshot
 
