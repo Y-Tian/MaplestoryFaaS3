@@ -28,7 +28,7 @@ class Rotation:
         time.sleep(3)
         log.info("Setting up routine")
         self.player.set_start_coordinates(player_coords)
-        skills.set_blink_shot_portal()
+        skills.set_blink_shot_portal(initial=True)
         common_skills.flash_jump_right()
         movement.turn_left()
         skills.swift_surge()

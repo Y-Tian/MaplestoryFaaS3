@@ -42,20 +42,23 @@ def gritty_gust() -> None:
 
 def use_blink_shot_portal() -> None:
     serial_input.key_down("d")
-    time.sleep(0.07)
+    time.sleep(0.1)
     serial_input.key_up("d")
 
     time.sleep(0.5)
 
 
-def set_blink_shot_portal() -> None:
-    serial_input.key_down("down")
-    time.sleep(0.07)
-    serial_input.key_down("d")
-    serial_input.key_up("d")
-    serial_input.key_up("down")
+def set_blink_shot_portal(initial = False) -> None:
+    if initial:
+        use_blink_shot_portal()
+    else:
+        serial_input.key_down("down")
+        time.sleep(0.1)
+        serial_input.key_down("d")
+        serial_input.key_up("d")
+        serial_input.key_up("down")
 
-    time.sleep(0.5)
+        time.sleep(0.5)
 
 
 def jumping_hurricane_left_right(duration: float) -> None:
