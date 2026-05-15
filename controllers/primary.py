@@ -5,6 +5,7 @@ from widgets.rune import Rune
 from routines.common import rune
 from widgets.anchor import Anchor
 from routines.bowmaster.hidden_illyard_field import Rotation
+import time
 
 log = init_logger(__name__)
 
@@ -16,6 +17,8 @@ class PrimaryController:
         self.anchor = anchor
 
     def run(self, stop_event: threading.Event):
+        # Delay for user to switch to the game window after starting the thread
+        time.sleep(3)
         log.info("Thread started")
         routine = Rotation(self.player, self.anchor)
         while not stop_event.is_set():

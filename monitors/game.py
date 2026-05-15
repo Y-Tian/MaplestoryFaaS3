@@ -1,10 +1,12 @@
 from widgets.minimap import Minimap
 import threading
+import time
 from widgets.logger import init_logger
 from widgets.player import Player
 from helpers.screenshot import get_screenshot
 from helpers.image_compare import find_coordinates_by_template
 from widgets.rune import Rune
+from config import RUNE_DETECTION_STABILITY_SECONDS
 
 log = init_logger(__name__)
 
@@ -15,6 +17,8 @@ class GameMonitor:
         self.minimap_image = None
         self.player = player
         self.rune = rune
+        self._rune_first_seen_at: float | None = None
+        self._pending_rune_coord = None
 
     def set_minimap_image(self) -> None:
         self.minimap_image = get_screenshot(self.minimap)
@@ -31,6 +35,8 @@ class GameMonitor:
 
     def update_rune_coordinates(self):
         if self.rune.icon is None or self.minimap_image is None:
+            self._rune_first_seen_at = None
+            self._pending_rune_coord = None
             self.rune.set_coordinates(None)
             return
 
@@ -47,11 +53,23 @@ class GameMonitor:
                 log.error(
                     f"Found rune coordinates {rune_coord} are out of bounds, ignoring."
                 )
+                self._rune_first_seen_at = None
+                self._pending_rune_coord = None
                 self.rune.set_coordinates(None)
                 return
 
-            self.rune.set_coordinates(rune_coord)
+            now = time.monotonic()
+            if self._rune_first_seen_at is None:
+                self._rune_first_seen_at = now
+            self._pending_rune_coord = rune_coord
+
+            if now - self._rune_first_seen_at >= RUNE_DETECTION_STABILITY_SECONDS:
+                self.rune.set_coordinates(self._pending_rune_coord)
+            else:
+                self.rune.set_coordinates(None)
         else:
+            self._rune_first_seen_at = None
+            self._pending_rune_coord = None
             self.rune.set_coordinates(None)
 
     def run(self, stop_event: threading.Event):
