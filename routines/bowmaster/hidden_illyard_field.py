@@ -20,11 +20,14 @@ class Rotation:
         self.loot_timer = 0
         self.summon_timer = 0
 
-    def setup(self):
+    def setup(self) -> None:
+        player_coords = self.player.get_coordinates()
+        if not player_coords:
+            return
         # Delay for the user to switch to the game window after clicking "Setup Routine"
         time.sleep(3)
         log.info("Setting up routine")
-        self.player.set_start_coordinates(self.player.get_coordinates())
+        self.player.set_start_coordinates(player_coords)
         skills.set_blink_shot_portal()
         common_skills.flash_jump_right()
         movement.turn_left()
@@ -33,11 +36,11 @@ class Rotation:
         skills.swift_surge()
         skills.swift_surge()
         skills.swift_surge()
-        self.anchor.set_coordinates(self.player.get_coordinates())
+        self.anchor.set_coordinates(player_coords)
         skills.use_blink_shot_portal()
         log.info("Routine setup complete")
 
-    def set_summons(self):
+    def set_summons(self) -> None:
         skills.use_blink_shot_portal()
         go_to(self.player, self.player.get_start_coordinates(), 1)
         skills.set_blink_shot_portal()
@@ -59,16 +62,16 @@ class Rotation:
         skills.swift_surge()
         skills.swift_surge()
 
-    def do_mobbing(self):
+    def do_mobbing(self) -> None:
         go_to(self.player, self.anchor.get_coordinates(), 1)
         skills.jumping_hurricane_left_right(time.time() + 45)
 
-    def mobbing_cycle(self):
+    def mobbing_cycle(self) -> None:
         while time.time() - self.loot_timer < 120:
             self.set_summons()
             self.do_mobbing()
 
-    def loot_cycle(self):
+    def loot_cycle(self) -> None:
         buff.activate_sequence()
         pet.feed()
 

@@ -49,14 +49,6 @@ def use_blink_shot_portal() -> None:
 
 
 def set_blink_shot_portal() -> None:
-    serial_input.key_down("d")
-    time.sleep(0.07)
-    serial_input.key_up("d")
-
-    time.sleep(0.5)
-
-
-def refresh_blink_shot_portal() -> None:
     serial_input.key_down("down")
     time.sleep(0.07)
     serial_input.key_down("d")
