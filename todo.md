@@ -1,1 +1,1 @@
-- bundle with PyInstaller (logging overhaul + file paths)
+- wiggle/jitter when failed to walk to rune like 5 times in a row
