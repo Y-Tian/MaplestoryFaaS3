@@ -5,7 +5,7 @@ from widgets.player import Player
 from widgets.rune import Rune
 from routines.common import rune
 from widgets.anchor import Anchor
-from routines.bowmaster.hidden_illyard_field import Rotation
+from routines.luminous.end_of_the_world_1_7 import Rotation
 import time
 from routines.common import escape
 
