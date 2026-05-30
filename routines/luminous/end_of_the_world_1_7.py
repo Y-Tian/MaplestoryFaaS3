@@ -26,31 +26,19 @@ class Rotation:
         time.sleep(3)
         log.info("Setting up routine")
         self.player.set_start_coordinates(player_coords)
-        common_skills.tp_up()
-        common_skills.tp_right()
-        common_skills.tp_right()
-        player_coords = self.player.get_coordinates()
-        if not player_coords:
-            return
-        self.anchor.set_coordinates(player_coords)
-        common_skills.tp_down()
-        common_skills.tp_left()
-        common_skills.tp_left()
         log.info("Routine setup complete")
 
     def do_mobbing(self) -> None:
         """
         Clear bottom platform, only works with vac pet
         """
-        go_to(self.player, self.anchor.get_coordinates(), 1)
-        skills.tp_right_atk()
+        go_to(self.player, self.player.get_start_coordinates(), 1)
         skills.tp_right_atk()
         skills.tp_right_atk()
         skills.tp_right_atk()
         skills.tp_right_atk()
         skills.tp_right_atk()
 
-        skills.tp_left_atk()
         skills.tp_left_atk()
         skills.tp_left_atk()
         skills.tp_left_atk()
@@ -67,9 +55,11 @@ class Rotation:
     def loot_cycle(self) -> None:
         go_to(self.player, self.player.get_start_coordinates(), 1)
         common_skills.tp_up()
+        skills.tp_left_atk()
         skills.tp_right_atk()
         skills.tp_right_atk()
-        time.sleep(1)
+        skills.tp_right_atk()
+        time.sleep(1.2)
         common_skills.tp_down()
         skills.tp_left_atk()
         skills.tp_left_atk()

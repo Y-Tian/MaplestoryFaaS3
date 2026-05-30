@@ -60,9 +60,11 @@ def hold_key(key: str, hold_time: float) -> None:
 def move_horizontal(direction_key: str, distance: int) -> None:
     if abs(distance) >= 30:
         if direction_key == "left":
-            common_skills.flash_jump_left()
+            # common_skills.flash_jump_left()
+            common_skills.tp_left()
         else:
-            common_skills.flash_jump_right()
+            # common_skills.flash_jump_right()
+            common_skills.tp_right()
     else:
         hold_key(direction_key, get_walk_hold_time(distance))
 

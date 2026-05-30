@@ -1,10 +1,10 @@
 from datetime import datetime
-from pathlib import Path
 import win32gui
 from PIL import ImageGrab, Image
 from config import ACTIVE_WINDOW_NAME
 from widgets.geometry import Point
 from typing import List
+from helpers.paths import ensure_parent_dir, runtime_path
 
 
 def get_active_window() -> List[Point]:
@@ -30,6 +30,8 @@ def get_screenshot(matrix: List[Point]) -> Image.Image:
 def save_screenshot(
     screenshot: Image.Image, folder: str, filename: str = "detection"
 ) -> None:
-    screenshot.save(
-        f"{Path(folder)}/{filename}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+    output_path = runtime_path(
+        folder, f"{filename}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
     )
+    ensure_parent_dir(output_path)
+    screenshot.save(output_path)

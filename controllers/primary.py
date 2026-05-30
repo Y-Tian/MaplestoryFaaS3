@@ -35,7 +35,11 @@ class PrimaryController:
 
         log.info("Rune detected, prioritizing solve attempts...")
         while not stop_event.is_set() and rune.detect_rune_present(self.rune):
-            solved = rune.solve(self.player, self.rune)
+            try:
+                solved = rune.solve(self.player, self.rune)
+            except Exception:
+                log.exception("Rune solve raised an unexpected exception.")
+                return
             if solved:
                 self._consecutive_rune_failures = 0
                 log.info("Rune solve input sequence sent successfully.")
