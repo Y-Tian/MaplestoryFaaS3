@@ -11,7 +11,7 @@ def tp_left_atk() -> None:
     serial_input.key_down("left")
     time.sleep(0.02)
     serial_input.key_down("c")
-    time.sleep(0.02)
+    time.sleep(0.07)
     serial_input.key_down("space")
 
     time.sleep(0.02)
@@ -27,7 +27,7 @@ def tp_right_atk() -> None:
     serial_input.key_down("right")
     time.sleep(0.02)
     serial_input.key_down("c")
-    time.sleep(0.02)
+    time.sleep(0.07)
     serial_input.key_down("space")
 
     time.sleep(0.02)

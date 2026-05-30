@@ -3,9 +3,12 @@ from tkinter import filedialog, messagebox
 from typing import Callable
 from pathlib import Path
 import importlib
+import importlib.util
+import hashlib
 from widgets.geometry import Point
 from widgets.minimap import Minimap
 from helpers.image_loader import get_image_boundaries
+from helpers.paths import runtime_path
 from widgets.player import Player
 from widgets.rune import Rune
 from widgets.anchor import Anchor
@@ -35,7 +38,7 @@ class GUI:
         self._stop_monitor = stop_monitor
         self._controller_running = False
         self._monitor_running = False
-        self._loaded_routine_module: str | None = None
+        self._loaded_routine_path: Path | None = None
 
         self.root = tk.Tk()
 
@@ -200,7 +203,7 @@ class GUI:
             self.startControllerButton["text"] = "Start Controller"
 
     def toggle_controller(self):
-        if not self._loaded_routine_module:
+        if not self._loaded_routine_path:
             messagebox.showerror("No routine loaded", "Load a routine file first.")
             return
 
@@ -226,8 +229,11 @@ class GUI:
         self.minimap.set_grid(minimap_boundaries)
         self.updateMinimapLabel()
 
+    def _get_routines_dir(self) -> Path:
+        return runtime_path("routines")
+
     def select_routine_file(self):
-        routines_dir = Path(__file__).resolve().parent / "routines"
+        routines_dir = self._get_routines_dir()
         selected_file = filedialog.askopenfilename(
             title="Select routine",
             initialdir=str(routines_dir),
@@ -237,26 +243,35 @@ class GUI:
             return
 
         selected_path = Path(selected_file).resolve()
-        relative_path = selected_path.relative_to(routines_dir)
+        if selected_path.suffix.lower() != ".py":
+            messagebox.showerror("Invalid routine", "Select a Python file.")
+            return
 
-        module_path = ".".join(("routines",) + relative_path.with_suffix("").parts)
-        self._loaded_routine_module = module_path
-        messagebox.showinfo("Routine loaded", f"Loaded: {module_path}")
+        self._loaded_routine_path = selected_path
+        messagebox.showinfo("Routine loaded", f"Loaded: {selected_path.name}")
 
     def run_loaded_routine_setup(self):
-        if not self._loaded_routine_module:
+        if not self._loaded_routine_path:
             messagebox.showerror("No routine loaded", "Load a routine file first.")
             return
-        self.setup_routine(self._loaded_routine_module)
+        self.setup_routine(self._loaded_routine_path)
 
-    def setup_routine(self, module_path: str):
-        module = importlib.import_module(module_path)
-        module = importlib.reload(module)
+    def setup_routine(self, routine_path: Path):
+        module_name = f"loaded_routine_{hashlib.sha1(str(routine_path).encode()).hexdigest()}"
+        spec = importlib.util.spec_from_file_location(module_name, routine_path)
+        if spec is None or spec.loader is None:
+            messagebox.showerror(
+                "Invalid routine", f"Could not load module from {routine_path}."
+            )
+            return
+
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
 
         rotation_cls = getattr(module, "Rotation", None)
         if rotation_cls is None:
             messagebox.showerror(
-                "Invalid routine", f"{module_path} has no Rotation class."
+                "Invalid routine", f"{routine_path.name} has no Rotation class."
             )
             return
 

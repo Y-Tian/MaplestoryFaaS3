@@ -1,3 +1,4 @@
+from helpers import paths
 from widgets.geometry import Point
 from PIL import Image
 from config import PLAYER_ICON_MATCH_THRESHOLD
@@ -6,7 +7,7 @@ from config import PLAYER_ICON_MATCH_THRESHOLD
 class Player:
     def __init__(self) -> None:
         self.coord = Point()
-        self.icon = Image.open("resources/player_icon.png")
+        self.icon = Image.open(paths.resource_path("resources/player_icon.png"))
         self.icon_match_threshold = PLAYER_ICON_MATCH_THRESHOLD
 
         # Set by the individual routines to know where the player started for reference

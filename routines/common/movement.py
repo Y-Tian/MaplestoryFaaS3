@@ -23,7 +23,7 @@ def turn_right() -> None:
 
 
 def rope_lift() -> None:
-    serial_input.press("h")
+    serial_input.press(ROPE_LIFT_KEY)
 
     time.sleep(3)
 
