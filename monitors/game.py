@@ -7,7 +7,7 @@ from widgets.player import Player
 from helpers.screenshot import get_screenshot
 from helpers.image_compare import find_coordinates_by_template
 from widgets.rune import Rune
-from config import RUNE_DETECTION_STABILITY_SECONDS
+from config import ICON_COLOR_VALIDATION, RUNE_DETECTION_STABILITY_SECONDS
 
 log = init_logger(__name__)
 
@@ -30,7 +30,10 @@ class GameMonitor:
             return
 
         player_coord = find_coordinates_by_template(
-            self.minimap_image, self.player.icon, self.player.icon_match_threshold
+            self.minimap_image,
+            self.player.icon,
+            self.player.icon_match_threshold,
+            color_validation=ICON_COLOR_VALIDATION,
         )
         if player_coord:
             self.player.set_coordinates(player_coord)
@@ -45,7 +48,10 @@ class GameMonitor:
             return
 
         rune_coord = find_coordinates_by_template(
-            self.minimap_image, self.rune.icon, self.rune.icon_match_threshold
+            self.minimap_image,
+            self.rune.icon,
+            self.rune.icon_match_threshold,
+            color_validation=ICON_COLOR_VALIDATION,
         )
         if rune_coord:
             if (
@@ -81,7 +87,10 @@ class GameMonitor:
             return
 
         enemy_coord = find_coordinates_by_template(
-            self.minimap_image, self.enemy.icon, self.enemy.icon_match_threshold
+            self.minimap_image,
+            self.enemy.icon,
+            self.enemy.icon_match_threshold,
+            color_validation=ICON_COLOR_VALIDATION,
         )
         if enemy_coord:
             self.enemy.set_coordinates(enemy_coord)

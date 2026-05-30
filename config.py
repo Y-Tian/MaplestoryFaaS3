@@ -1,3 +1,5 @@
+from helpers.image_compare import HsvValidation
+
 # GUI and main configuration settings
 GUI_NAME = "BacklitManager"
 ACTIVE_WINDOW_NAME = "MapleStory"
@@ -7,6 +9,13 @@ PLAYER_ICON_MATCH_THRESHOLD = 0.30
 RUNE_DETECTION_STABILITY_SECONDS = 5.0
 RUNE_ICON_MATCH_THRESHOLD = 0.30
 ENEMY_ICON_MATCH_THRESHOLD = 0.30
+
+ICON_COLOR_VALIDATION = HsvValidation(
+    hue_tolerance=20,
+    saturation_tolerance=40,
+    value_tolerance=30,
+    min_match_ratio=0.75,
+)
 
 # Serial communication settings
 DEFAULT_BAUDRATE = 115200
