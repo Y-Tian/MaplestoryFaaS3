@@ -7,7 +7,11 @@ from widgets.player import Player
 from helpers.screenshot import get_screenshot
 from helpers.image_compare import find_coordinates_by_template
 from widgets.rune import Rune
-from config import ICON_COLOR_VALIDATION, RUNE_DETECTION_STABILITY_SECONDS
+from config import (
+    ICON_COLOR_VALIDATION,
+    RUNE_DETECTION_STABILITY_SECONDS,
+    RUNE_MISS_GRACE_FRAMES,
+)
 
 log = init_logger(__name__)
 
@@ -21,6 +25,19 @@ class GameMonitor:
         self.enemy = enemy
         self._rune_first_seen_at: float | None = None
         self._pending_rune_coord = None
+        self._rune_miss_count = 0
+        self._confirmed_rune_coord = None
+
+    def _clear_rune_state(self) -> None:
+        self._rune_first_seen_at = None
+        self._pending_rune_coord = None
+        self._rune_miss_count = 0
+        self._confirmed_rune_coord = None
+        self.rune.set_coordinates(None)
+
+    def _publish_rune_coord(self, rune_coord) -> None:
+        self._confirmed_rune_coord = rune_coord
+        self.rune.set_coordinates(rune_coord)
 
     def set_minimap_image(self) -> None:
         self.minimap_image = get_screenshot(self.minimap.get_grid())
@@ -42,9 +59,7 @@ class GameMonitor:
 
     def update_rune_coordinates(self):
         if self.rune.icon is None or self.minimap_image is None:
-            self._rune_first_seen_at = None
-            self._pending_rune_coord = None
-            self.rune.set_coordinates(None)
+            self._clear_rune_state()
             return
 
         rune_coord = find_coordinates_by_template(
@@ -63,24 +78,28 @@ class GameMonitor:
                 log.error(
                     f"Found rune coordinates {rune_coord} are out of bounds, ignoring."
                 )
-                self._rune_first_seen_at = None
-                self._pending_rune_coord = None
-                self.rune.set_coordinates(None)
+                self._clear_rune_state()
                 return
 
             now = time.monotonic()
+            self._rune_miss_count = 0
             if self._rune_first_seen_at is None:
                 self._rune_first_seen_at = now
             self._pending_rune_coord = rune_coord
 
             if now - self._rune_first_seen_at >= RUNE_DETECTION_STABILITY_SECONDS:
-                self.rune.set_coordinates(self._pending_rune_coord)
-            else:
-                self.rune.set_coordinates(None)
+                self._publish_rune_coord(self._pending_rune_coord)
+            elif self._confirmed_rune_coord is not None:
+                # Keep the last confirmed rune alive while it is still being observed.
+                self._publish_rune_coord(self._confirmed_rune_coord)
         else:
-            self._rune_first_seen_at = None
-            self._pending_rune_coord = None
-            self.rune.set_coordinates(None)
+            if self._confirmed_rune_coord is not None:
+                self._rune_miss_count += 1
+                if self._rune_miss_count < RUNE_MISS_GRACE_FRAMES:
+                    self.rune.set_coordinates(self._confirmed_rune_coord)
+                    return
+
+            self._clear_rune_state()
 
     def update_enemy_coordinates(self):
         if self.enemy.icon is None or self.minimap_image is None:
