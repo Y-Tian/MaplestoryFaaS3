@@ -91,6 +91,25 @@ def move_vertical(direction_key: str) -> None:
         time.sleep(1.1)
 
 
+def get_horizontal_jitter_distance(buffer_distance: float) -> int:
+    # Keep the probe small so we can search for a better ledge/rope position
+    # without drifting far outside the original target window.
+    return max(1, min(2, int(buffer_distance) if buffer_distance >= 1 else 1))
+
+
+def get_horizontal_jitter_direction(
+    delta_x: int, jitter_flip: bool
+) -> tuple[str, bool]:
+    base_direction = "right" if delta_x >= 0 else "left"
+    alternate_direction = "left" if base_direction == "right" else "right"
+
+    # Alternate sides so the bot can probe for the ledge/rope angle that works.
+    return (
+        (alternate_direction if jitter_flip else base_direction),
+        not jitter_flip,
+    )
+
+
 def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> None:
     player_coords = player.get_coordinates()
     if not player_coords:
@@ -109,8 +128,11 @@ def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> No
 
     current_player_y = player_coords.y
     delta_y = target_point.y - current_player_y
+    vertical_stall_attempts = 0
+    jitter_flip = False
     # Add some wiggle room for vertical movement
     while abs(delta_y) > (buffer_distance + 5):
+        previous_player_y = current_player_y
         direction = "down" if delta_y > 0 else "up"
         move_vertical(direction)
         player_coords = player.get_coordinates()
@@ -118,3 +140,22 @@ def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> No
             return
         current_player_y = player_coords.y
         delta_y = target_point.y - current_player_y
+
+        if current_player_y == previous_player_y:
+            vertical_stall_attempts += 1
+        else:
+            vertical_stall_attempts = 0
+
+        if vertical_stall_attempts >= 3:
+            jitter_direction, jitter_flip = get_horizontal_jitter_direction(
+                delta_x, jitter_flip
+            )
+            move_horizontal(
+                jitter_direction, get_horizontal_jitter_distance(buffer_distance)
+            )
+            player_coords = player.get_coordinates()
+            if not player_coords:
+                return
+            current_player_x = player_coords.x
+            delta_x = target_point.x - current_player_x
+            vertical_stall_attempts = 0

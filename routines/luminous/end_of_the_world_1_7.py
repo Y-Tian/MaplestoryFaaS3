@@ -32,7 +32,7 @@ class Rotation:
         """
         Clear bottom platform, only works with vac pet
         """
-        go_to(self.player, self.player.get_start_coordinates(), 1)
+        go_to(self.player, self.player.get_start_coordinates(), 2)
         skills.tp_right_atk()
         skills.tp_right_atk()
         skills.tp_right_atk()
@@ -49,7 +49,7 @@ class Rotation:
         skills.tp_right_atk()
 
     def mobbing_cycle(self) -> None:
-        while time.time() - self.loot_timer < 60:
+        while time.time() - self.loot_timer < 90:
             self.do_mobbing()
 
     def loot_cycle(self) -> None:

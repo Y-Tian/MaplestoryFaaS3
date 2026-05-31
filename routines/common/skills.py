@@ -40,7 +40,7 @@ def tp_right() -> None:
     time.sleep(0.02)
     serial_input.key_up("right")
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 def tp_left() -> None:
     serial_input.key_down("left")
@@ -51,7 +51,7 @@ def tp_left() -> None:
     time.sleep(0.02)
     serial_input.key_up("left")
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 def tp_up() -> None:
     serial_input.key_down("v")
@@ -66,7 +66,7 @@ def tp_up() -> None:
     time.sleep(0.02)
     serial_input.key_up("v")
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 def tp_down() -> None:
     serial_input.key_down("down")
@@ -77,7 +77,7 @@ def tp_down() -> None:
     time.sleep(0.02)
     serial_input.key_up("down")
 
-    time.sleep(0.5)
+    time.sleep(0.2)
 
 def set_erda_fountain() -> None:
     serial_input.key_down("shift")

@@ -105,3 +105,19 @@ Current expectations:
 
 - Screenshot backups for rune attempts are saved under `backups/`.
 - Logging output helps track monitor/controller thread status and rune solving decisions.
+
+## Building a Windows EXE
+
+Use the included PyInstaller spec:
+
+```bash
+py -m PyInstaller --clean --noconfirm BacklitManager.spec
+```
+
+The packaged build outputs `dist/BacklitManager/BacklitManager.exe`.
+
+Runtime notes for the packaged build:
+
+- bundled assets are resolved from the PyInstaller extraction directory
+- screenshots and recovery images are written next to the executable in `backup/`
+- `MAPLE_PICO_PORT` still applies
