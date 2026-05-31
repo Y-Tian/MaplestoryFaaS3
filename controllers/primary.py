@@ -77,6 +77,7 @@ class PrimaryController:
         time.sleep(3)
         log.info("Thread started")
         routine = Rotation(self.player, self.anchor)
+        loot_timer = time.time()
         while not stop_event.is_set():
             # Invoke a known set of routines in sequence
             self.check_defaults(stop_event)
@@ -85,7 +86,10 @@ class PrimaryController:
             Add routine phase 1 below
             """
 
-            routine.mobbing_cycle()
+            while time.time() - loot_timer < 90:
+                routine.mobbing_phase_1()
+                self.check_defaults(stop_event)
+                routine.mobbing_phase_2()
 
             """
             Add routine phase 1 above
@@ -98,6 +102,7 @@ class PrimaryController:
             """
 
             routine.loot_cycle()
+            loot_timer = time.time()
 
             """
             Add routine phase 2 above

@@ -1,1 +1,2 @@
 - wiggle/jitter when failed to walk to rune like 5 times in a row
+- once a rune is detected, the coordinates shouldn't get cleared. only clear after successful solve

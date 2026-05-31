@@ -13,7 +13,6 @@ class Rotation:
     def __init__(self, player: Player, anchor: Anchor) -> None:
         self.player = player
         self.anchor = anchor
-        self.loot_timer = 0
 
     """
     left lowest platform, next to red banner flag portal
@@ -28,7 +27,7 @@ class Rotation:
         self.player.set_start_coordinates(player_coords)
         log.info("Routine setup complete")
 
-    def do_mobbing(self) -> None:
+    def mobbing_phase_1(self) -> None:
         """
         Clear bottom platform, only works with vac pet
         """
@@ -39,6 +38,10 @@ class Rotation:
         skills.tp_right_atk()
         skills.tp_right_atk()
 
+    def mobbing_phase_2(self) -> None:
+        """
+        Clear bottom platform, only works with vac pet
+        """
         skills.tp_left_atk()
         skills.tp_left_atk()
         skills.tp_left_atk()
@@ -47,10 +50,6 @@ class Rotation:
         skills.tp_left_atk()
         
         skills.tp_right_atk()
-
-    def mobbing_cycle(self) -> None:
-        while time.time() - self.loot_timer < 90:
-            self.do_mobbing()
 
     def loot_cycle(self) -> None:
         go_to(self.player, self.player.get_start_coordinates(), 1)
@@ -63,4 +62,3 @@ class Rotation:
         common_skills.tp_down()
         skills.tp_left_atk()
         skills.tp_left_atk()
-        self.loot_timer = time.time()

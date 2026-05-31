@@ -72,23 +72,59 @@ def move_horizontal(direction_key: str, distance: int) -> None:
     time.sleep(0.05)
 
 
-def move_vertical(direction_key: str) -> None:
+def move_vertical(direction_key: str) -> float:
     if direction_key == "up":
         serial_input.key_down(JUMP_KEY)
         # Delay to be in the air to reach the highest platform
         time.sleep(0.05)
         serial_input.press(ROPE_LIFT_KEY)
         serial_input.key_up(JUMP_KEY)
-        # Delay for rope lift momentum
-        time.sleep(1.5)
+        # Time budget for rope lift momentum and the follow-through arc.
+        return 1.5
     else:
         serial_input.key_down("down")
         # Delay to slide down a rope, if there is one (assumption)
         time.sleep(0.4)
         serial_input.press(JUMP_KEY)
         serial_input.key_up("down")
-        # Delay for air time momentum
-        time.sleep(1.1)
+        # Time budget for the downward hop and fall-through arc.
+        return 1.1
+
+
+def has_vertical_progressed(
+    previous_y: int, current_y: int, direction: str
+) -> bool:
+    if direction == "up":
+        return current_y < previous_y
+    return current_y > previous_y
+
+
+def wait_for_vertical_progress(
+    player: Player,
+    previous_y: int,
+    direction: str,
+    wait_time: float,
+    poll_interval: float = 0.2,
+) -> tuple[int | None, bool]:
+    deadline = time.monotonic() + wait_time
+    current_y = previous_y
+    saw_progress = False
+
+    while True:
+        remaining_time = deadline - time.monotonic()
+        if remaining_time <= 0:
+            break
+
+        time.sleep(min(poll_interval, remaining_time))
+        player_coords = player.get_coordinates()
+        if not player_coords:
+            return None, False
+
+        current_y = player_coords.y
+        if has_vertical_progressed(previous_y, current_y, direction):
+            saw_progress = True
+
+    return current_y, saw_progress
 
 
 def get_horizontal_jitter_distance(buffer_distance: float) -> int:
@@ -134,17 +170,19 @@ def go_to(player: Player, target_point: Point, buffer_distance: float = 0) -> No
     while abs(delta_y) > (buffer_distance + 5):
         previous_player_y = current_player_y
         direction = "down" if delta_y > 0 else "up"
-        move_vertical(direction)
-        player_coords = player.get_coordinates()
-        if not player_coords:
+        movement_wait = move_vertical(direction)
+        sampled_player_y, saw_progress = wait_for_vertical_progress(
+            player, previous_player_y, direction, movement_wait
+        )
+        if sampled_player_y is None:
             return
-        current_player_y = player_coords.y
+        current_player_y = sampled_player_y
         delta_y = target_point.y - current_player_y
 
-        if current_player_y == previous_player_y:
-            vertical_stall_attempts += 1
-        else:
+        if saw_progress:
             vertical_stall_attempts = 0
+        else:
+            vertical_stall_attempts += 1
 
         if vertical_stall_attempts >= 3:
             jitter_direction, jitter_flip = get_horizontal_jitter_direction(
