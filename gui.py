@@ -5,6 +5,7 @@ from pathlib import Path
 import importlib
 import importlib.util
 import hashlib
+import time
 from widgets.geometry import Point
 from widgets.minimap import Minimap
 from helpers.image_loader import get_image_boundaries
@@ -39,6 +40,7 @@ class GUI:
         self._controller_running = False
         self._monitor_running = False
         self._loaded_routine_path: Path | None = None
+        self._app_start_time = time.monotonic()
 
         self.root = tk.Tk()
 
@@ -189,7 +191,14 @@ class GUI:
         self.updatePlayerCurrentCoordinates(self.player.get_coordinates())
         self.updateStartCurrentCoordinates(self.player.get_start_coordinates())
         self.updateRuneCurrentCoordinates(self.rune.get_coordinates())
+        self.updateRuntimeLabel()
         self.root.after(500, self.refresh_live_info)
+
+    def updateRuntimeLabel(self):
+        elapsed_seconds = int(time.monotonic() - self._app_start_time)
+        hours, remainder = divmod(elapsed_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        self.elapsedRuntimeLabel["text"] = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
     def updateBotStatus(self, is_running: bool):
         self._controller_running = is_running
